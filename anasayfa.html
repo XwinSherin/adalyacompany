@@ -12,7 +12,7 @@
       --radius:16px;--shadow:0 6px 20px rgba(0,0,0,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-    body{background:var(--bg);color:var(--text)}
+    body{background:var(--bg);color:var(--text);padding-bottom:100px}
     /* ÜST BAR */
     .top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
     .logo-name{display:flex;align-items:center;gap:8px}
@@ -53,8 +53,8 @@
     .gram-card.g-50{background:var(--g50)}.gram-card.g-250{background:var(--g250)}.gram-card.g-1000{background:var(--g1000)}
     .gram-card .val{color:var(--gold);font-size:1.1rem}
 
-    /* MODAL GENEL TOPLAM */
-    .modal-total-btn{width:90%;max-width:300px;margin:12px auto;display:block;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:700;cursor:pointer}
+    /* MODAL BUTON */
+    .modal-btn{width:90%;max-width:300px;margin:12px auto;display:block;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:700;cursor:pointer}
 
     /* MODAL */
     .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
@@ -84,7 +84,7 @@
     .del-btn{background:var(--error);color:#fff}
 
     /* EXCEL CDN */
-    script = document.createElement('script');
+    const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
     document.head.appendChild(script);
 </style>
@@ -138,15 +138,8 @@
 <!-- GRAMAJ TOPLAMLARI -->
 <section class="gram-totals" id="gramTotals"></section>
 
-<!-- MODAL GENEL TOPLAM BUTONU -->
-<button class="modal-total-btn" onclick="showSummary()" data-tr="Genel Toplam ve Devam" data-ar="الإجمالي الكلي والمتابعة" data-en="Grand Total and Continue">Genel Toplam ve Devam</button>
-
-<!-- DİL BUTONLARI -->
-<div class="lang-float">
-  <button onclick="setLang('tr')" title="Türkçe" class="active">TR</button>
-  <button onclick="setLang('ar')" title="العربية">AR</button>
-  <button onclick="setLang('en')" title="English">EN</button>
-</div>
+<!-- MODAL BUTON -->
+<button class="modal-btn" onclick="showSummary()" data-tr="Sipariş Oluştur" data-ar="إنشاء الطلب" data-en="Create Order">Sipariş Oluştur</button>
 
 <!-- MODAL -->
 <div class="modal" id="summaryModal">
@@ -190,9 +183,10 @@
     document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
     document.querySelectorAll('[data-tr]').forEach(el => el.textContent = el.dataset[lang] || el.dataset.tr);
     document.querySelectorAll('[data-tr-placeholder]').forEach(el => el.placeholder = el.dataset[lang + 'Placeholder'] || el.dataset.trPlaceholder);
-    document.querySelectorAll('.lang-top button, .lang-float button').forEach(b => b.classList.toggle('active', b.title.includes(lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'Türkçe')));
+    document.querySelectorAll('.lang-top button').forEach(b => b.classList.toggle('active', b.title.includes(lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'Türkçe')));
     renderProducts(); // başlıkları güncelle
     updateGramTotals();
+    shipCards();
   }
 
   /* OTO SİPARİŞ KODU */
@@ -246,9 +240,9 @@
         <table>
           <thead><tr><th data-tr="Gram" data-ar="غرام" data-en="Gram">Gram</th><th data-tr="Koli" data-ar="كولا" data-en="Carton">Koli</th><th data-tr="KG" data-ar="كجم" data-en="KG">KG</th></tr></thead>
           <tbody>
-            <tr class="tr-50"><td>50 G</td><td><input type="text" maxlength="6" data-g="50" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="50"> </td></tr>
-            <tr class="tr-250"><td>250 G</td><td><input type="text" maxlength="6" data-g="250" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="250"> </td></tr>
-            <tr class="tr-1000"><td>1000 G</td><td><input type="text" maxlength="6" data-g="1000" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="1000"> </td></tr>
+            <tr class="tr-50"><td data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</td><td><input type="text" maxlength="6" data-g="50" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="50"> </td></tr>
+            <tr class="tr-250"><td data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</td><td><input type="text" maxlength="6" data-g="250" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="250"> </td></tr>
+            <tr class="tr-1000"><td data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</td><td><input type="text" maxlength="6" data-g="1000" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="1000"> </td></tr>
           </tbody>
           <tfoot><tr class="total-row"><td data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</td><td data-total-koli="0"> </td><td data-total-kg="0"> </td></tr></tfoot>
         </table>
@@ -286,13 +280,13 @@
     });
     const container = document.getElementById('gramTotals');
     container.innerHTML = `
-      <div class="gram-card g-50"><div>50 G</div><div class="val">${totals[50] === 0 ? ' ' : totals[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[50] * KOLI_KG) === 0 ? ' ' : (totals[50] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
-      <div class="gram-card g-250"><div>250 G</div><div class="val">${totals[250] === 0 ? ' ' : totals[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[250] * KOLI_KG) === 0 ? ' ' : (totals[250] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
-      <div class="gram-card g-1000"><div>1000 G</div><div class="val">${totals[1000] === 0 ? ' ' : totals[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[1000] * KOLI_KG) === 0 ? ' ' : (totals[1000] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
+      <div class="gram-card g-50"><div data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</div><div class="val">${totals[50] === 0 ? ' ' : totals[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[50] * KOLI_KG) === 0 ? ' ' : (totals[50] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
+      <div class="gram-card g-250"><div data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</div><div class="val">${totals[250] === 0 ? ' ' : totals[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[250] * KOLI_KG) === 0 ? ' ' : (totals[250] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
+      <div class="gram-card g-1000"><div data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</div><div class="val">${totals[1000] === 0 ? ' ' : totals[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[1000] * KOLI_KG) === 0 ? ' ' : (totals[1000] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
     `;
   }
 
-  /* MODAL GENEL TOPLAM */
+  /* MODAL BUTON */
   function showSummary() {
     const customer = document.getElementById('customer').value.trim();
     if (!customer) { alert(currentLang === 'ar' ? 'يرجى إدخال اسم العميل' : currentLang === 'en' ? 'Please enter customer name' : 'Lütfen müşteri adı girin'); return; }
@@ -325,10 +319,10 @@
       <p><strong data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim:</strong> ${shipText}</p>
       <p><strong data-tr="Tarih" data-ar="التاريخ" data-en="Date">Tarih:</strong> ${currentOrder.date}</p>
       <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
-      <table style="width:100%;font-size:.85rem">
-        <thead><tr><th data-tr="Ürün" data-ar="المنتج" data-en="Product">Ürün</th><th>50 G</th><th>250 G</th><th>1000 G</th><th data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</th></tr></thead>
+      <table style="width:100%;font-size:.85rem;border-collapse:collapse;border:1px solid var(--border)">
+        <thead><tr><th data-tr="Ürün" data-ar="المنتج" data-en="Product">Ürün</th><th style="background:var(--g50)">50 G</th><th style="background:var(--g250)">250 G</th><th style="background:var(--g1000)">1000 G</th><th data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</th></tr></thead>
         <tbody>
-          ${items.map(it => `<tr><td>${it.name}</td><td>${it[50] === 0 ? ' ' : it[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it[250] === 0 ? ' ' : it[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it[1000] === 0 ? ' ' : it[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${it.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td></tr>`).join('')}
+          ${items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50] === 0 ? ' ' : it[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g250)">${it[250] === 0 ? ' ' : it[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g1000)">${it[1000] === 0 ? ' ' : it[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${it.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td></tr>`).join('')}
         </tbody>
       </table>
       <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
@@ -337,15 +331,6 @@
     document.getElementById('summaryModal').classList.add('show');
   }
   function closeModal() { document.getElementById('summaryModal').classList.remove('show'); }
-
-  /* KAYDET */
-  function saveOrder() {
-    orders.push(currentOrder);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    closeModal();
-    alert(currentLang === 'ar' ? '✅ تم الحفظ' : currentLang === 'en' ? '✅ Saved' : '✅ Kaydedildi');
-    yeniSiparis();
-  }
 
   /* WHATSAPP */
   function shareWhatsApp() {
