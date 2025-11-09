@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title data-tr="Adalya Company – Giriş" data-ar="أداليا – تسجيل الدخول" data-en="Adalya Company – Login">Adalya Company – Giriş</title>
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    body{height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);padding:16px}
+    .login-box{width:100%;max-width:360px;background:#fff;border-radius:20px;padding:40px 24px;box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center}
+    /* LOGO ALANI */
+    .logo-box{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;overflow:hidden;border:4px solid #fff;background:#f1f3f5;display:flex;align-items:center;justify-content:center}
+    .logo-box img{width:100%;height:100%;object-fit:cover}
+    /* ŞİRKET ADI + 2. SATIR */
+    .brand{display:flex;flex-direction:column;gap:4px;margin-bottom:24px}
+    .brand .company{font-size:1.1rem;font-weight:700;color:#2c3e50}
+    .brand .form-title{font-size:1.25rem;font-weight:800;color:#4facfe}
+    /* Input + Button */
+    input{width:100%;padding:14px 16px;margin-bottom:16px;border:1.5px solid #ddd;border-radius:12px;font-size:1rem;transition:.3s}
+    input:focus{outline:none;border-color:#4facfe;box-shadow:0 0 0 3px rgba(79,172,254,.2)}
+    button{width:100%;padding:14px;background:#4facfe;color:#fff;font-size:1rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:.3s}
+    button:active{transform:scale(.98)}button:hover{background:#00f2fe}
+    .error{display:none;color:#e74c3c;font-size:.85rem;margin-top:-10px;margin-bottom:10px}
+    /* MOBİL DİL BUTONU - SAĞ ALT KÖŞE */
+    .lang-float{position:fixed;bottom:16px;right:16px;z-index:999;display:flex;gap:6px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:6px;border-radius:30px;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+    .lang-float button{min-width:64px;height:40px;border:none;border-radius:20px;font-size:.9rem;font-weight:700;cursor:pointer;transition:transform .2s;-webkit-tap-highlight-color:transparent}
+    .lang-float button:active{transform:scale(.92)}
+    .lang-float button.active{box-shadow:inset 0 0 0 3px #4facfe}
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <!-- LOGO -->
+  <div class="logo-box">
+    <!-- YOL 1: WEB'DEN RESİM -->
+    <img id="logo-img" src="https://via.placeholder.com/120x120?text=LOGO" alt="Logo">
+    <!-- YOL 2: YEREL DOSYA -->
+    <!-- <img id="logo-img" src="img/logo.png" alt="Logo"> -->
+  </div>
+
+  <!-- ŞİRKET ADI + 2. SATIR -->
+  <div class="brand">
+    <div class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</div>
+    <div class="form-title" data-tr="Sipariş Formu" data-ar="نموذج الطلب" data-en="Order Form">Sipariş Formu</div>
+  </div>
+
+  <input type="text" id="user" placeholder="Kullanıcı adı" data-tr-placeholder="Kullanıcı adı" data-ar-placeholder="اسم المستخدم" data-en-placeholder="Username">
+  <input type="password" id="pass" placeholder="Şifre" data-tr-placeholder="Şifre" data-ar-placeholder="كلمة المرور" data-en-placeholder="Password">
+
+  <div class="error" id="msg" data-tr="Kullanıcı adı veya şifre yanlış!" data-ar="اسم المستخدم أو كلمة المرور خاطئة!" data-en="Wrong username or password!">Kullanıcı adı veya şifre yanlış!</div>
+
+  <button onclick="giris()" data-tr="Giriş" data-ar="دخول" data-en="Login">Giriş</button>
+</div>
+
+<!-- DİL BUTONLARI - METİN -->
+<div class="lang-float">
+  <button class="active" onclick="setLang('tr')" title="Türkçe">Türkçe</button>
+  <button onclick="setLang('ar')" title="العربية (العراق)">العربية (العراق)</button>
+  <button onclick="setLang('en')" title="English">English</button>
+</div>
+
+<script>
+  // DİL DEĞİŞTİRME
+  function setLang(lang){
+    localStorage.setItem('lang',lang);
+    document.documentElement.lang=lang;
+    document.documentElement.dir=(lang==='ar'?'rtl':'ltr');
+
+    // metinler
+    document.querySelectorAll('[data-tr]').forEach(el=>{
+      el.textContent=el.dataset[lang]||el.dataset.tr;
+    });
+    // placeholder'lar
+    document.querySelectorAll('[data-tr-placeholder]').forEach(el=>{
+      el.placeholder=el.dataset[lang+'Placeholder']||el.dataset.trPlaceholder;
+    });
+
+    // active buton
+    document.querySelectorAll('.lang-float button').forEach(b=>b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية (العراق)':lang==='en'?'English':'Türkçe')));
+  }
+
+  // GİRİŞ KONTROLÜ
+  function giris(){
+    const u=document.getElementById('user').value.trim();
+    const p=document.getElementById('pass').value.trim();
+    if(!localStorage.getItem('users')){
+      localStorage.setItem('users',JSON.stringify([{user:'admin',pass:'Adalya123'}]));
+    }
+    const users=JSON.parse(localStorage.getItem('users'));
+    const ok=users.find(x=>x.user===u && x.pass===p);
+    if(ok){
+      localStorage.setItem('giris','1');
+      localStorage.setItem('currentUser',u);
+      window.location.href='anasayfa.html';
+    }else{
+      document.getElementById('msg').style.display='block';
+    }
+  }
+
+  // SAYFA AÇILIRKEN SON DİLİ UYGULA
+  (()=>{setLang(localStorage.getItem('lang')||'tr')})();
+</script>
+
+</body>
+</html>
