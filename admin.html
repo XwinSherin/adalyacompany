@@ -1,32 +1,47 @@
 <!DOCTYPE html>
-<html lang="tr" dir="ltr">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title data-tr="Admin Paneli" data-ar="لوحة الإدارة" data-en="Admin Panel">Admin Paneli</title>
+  <title>Admin Paneli</title>
   <style>
-    :root{--gold:#d4af37;--gold-dark:#b8941f;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;--g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;--radius:16px;--shadow:0 4px 18px rgba(0,0,0,.08)}
+    :root{--gold:#d4af37;--gold-dark:#b8941f;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;--g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;--radius:16px;--shadow:0 6px 20px rgba(0,0,0,.08)}
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
     body{background:var(--bg);color:var(--text)}
     /* ÜST BAR */
-    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
     .logo-name{display:flex;align-items:center;gap:8px}
     .logo-name img{height:40px;border-radius:8px}
-    .logo-name .company{font-size:1.05rem;font-weight:700}
-    .lang-top{display:flex;gap:6px}
-    .lang-top button{min-width:40px;height:28px;border:none;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
-    .lang-top button.active{background:var(--gold);color:#fff}
-    .logout-btn{background:var(--error);color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:.8rem;font-weight:700;cursor:pointer}
+    .logo-name .company{font-size:1.1rem;font-weight:700}
+    .logout-btn{background:var(--error);color:#fff;border:none;border-radius:var(--radius);padding:8px 14px;font-size:.8rem;font-weight:700;cursor:pointer}
 
     /* SEKMELER */
-    .tabs{display:flex;gap:4px;padding:8px 16px;background:var(--surface);position:sticky;top:48px;z-index:980}
-    .tab{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
+    .tabs{display:flex;gap:4px;padding:8px 16px;background:var(--surface);position:sticky;top:56px;z-index:980}
+    .tab{flex:1;padding:10px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
     .tab.active{background:var(--gold);color:#fff}
 
     /* İÇERİK */
     .content{padding:12px 16px;max-width:900px;margin:auto}
     .section{display:none}
     .section.active{display:block}
+
+    /* BUTONLAR */
+    .btn-modern{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer;transition:transform .2s}
+    .btn-modern:active{transform:scale(.96)}
+    .btn-primary{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(212,175,55,.3)}
+    .btn-secondary{background:#eee;color:var(--text)}
+
+    /* TABLO + FİLTRE */
+    .table-container{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;margin-bottom:12px}
+    .filter-input{width:100%;max-width:300px;padding:8px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem;margin-bottom:10px}
+    table{width:100%;border-collapse:collapse;font-size:.8rem}
+    th,td{padding:8px;text-align:center;border:1px solid var(--border)}
+    th{background:var(--bg);font-weight:700}
+    tr:nth-child(even){background:var(--bg)}
+    .actions{display:flex;gap:6px;justify-content:center}
+    .actions button{padding:6px 8px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
+    .edit-btn{background:var(--gold);color:#fff}
+    .del-btn{background:var(--error);color:#fff}
 
     /* LİSTE + SIRALAMA */
     .list{display:flex;flex-direction:column;gap:10px}
@@ -36,19 +51,6 @@
     .item .info{flex:1;font-size:.85rem}
     .item .info .name{font-weight:700}
     .item .info .sub{color:var(--text);opacity:.7}
-    .item .actions{display:flex;gap:6px}
-    .item .actions button{padding:6px 8px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
-    .edit-btn{background:var(--gold);color:#fff}
-    .del-btn{background:var(--error);color:#fff}
-
-    /* FORM */
-    .form{background:var(--surface);border-radius:var(--radius);padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
-    .form input,.form select,.form textarea{width:100%;padding:8px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem}
-    .form textarea{resize:vertical;min-height:60px}
-    .form-buttons{display:flex;gap:8px}
-    .form-buttons button{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
-    .save-btn{background:var(--gold);color:#fff}
-    .cancel-btn{background:#eee;color:var(--text)}
 
     /* MODAL */
     .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
@@ -57,7 +59,7 @@
     .modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
     .modal-header h2{font-size:1.1rem}
     .close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text)}
-    .modal-body{padding:16px;font-size:.85rem;line-height:1.5}
+    .modal-body{padding:16px;font-size:.85rem;line-height:1.5;display:flex;flex-direction:column;gap:10px}
     .modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
     .modal-footer button{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
     .save-btn{background:var(--gold);color:#fff}
@@ -67,7 +69,7 @@
     script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
     document.head.appendChild(script);
-</style>
+  </style>
 </head>
 <body>
 
@@ -75,42 +77,55 @@
 <header class="top-bar">
   <div class="logo-name">
     <img src="img/adalyalogo.jpg" alt="Logo">
-    <span class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</span>
+    <span class="company">Adalya Company</span>
   </div>
-  <div class="lang-top">
-    <button onclick="setLang('tr')" title="Türkçe" class="active">TR</button>
-    <button onclick="setLang('ar')" title="العربية">AR</button>
-    <button onclick="setLang('en')" title="English">EN</button>
-  </div>
-  <button class="logout-btn" onclick="cikis()" data-tr="Çıkış" data-ar="خروج" data-en="Logout">Çıkış</button>
+  <button class="logout-btn" onclick="cikis()">Çıkış</button>
 </header>
 
 <!-- SEKMELER -->
 <div class="tabs">
-  <button class="tab active" onclick="changeTab('orders')" data-tr="Siparişler" data-ar="الطلبات" data-en="Orders">Siparişler</button>
-  <button class="tab" onclick="changeTab('products')" data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</button>
-  <button class="tab" onclick="changeTab('users')" data-tr="Kullanıcılar" data-ar="المستخدمون" data-en="Users">Kullanıcılar</button>
+  <button class="tab active" onclick="changeTab('orders')">Siparişler</button>
+  <button class="tab" onclick="changeTab('products')">Ürünler</button>
+  <button class="tab" onclick="changeTab('users')">Kullanıcılar</button>
 </div>
 
 <!-- İÇERİK -->
 <div class="content">
   <!-- SİPARİŞLER -->
   <section id="orders" class="section active">
-    <h3 data-tr="Siparişler" data-ar="الطلبات" data-en="Orders">Siparişler</h3>
-    <div class="list" id="ordersList"></div>
+    <h3>Siparişler</h3>
+    <div class="table-container">
+      <input type="text" class="filter-input" id="orderFilter" placeholder="Müşteri adı veya sipariş kodu ara..." oninput="filterOrders()">
+      <table id="ordersTable">
+        <thead>
+          <tr>
+            <th>Müşteri</th>
+            <th>Kod</th>
+            <th>Gönderim</th>
+            <th>50G</th>
+            <th>250G</th>
+            <th>1000G</th>
+            <th>Toplam Koli</th>
+            <th>Toplam KG</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ÜRÜNLER -->
   <section id="products" class="section">
-    <h3 data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</h3>
-    <button class="btn btn-primary" onclick="openProductForm()" data-tr="Yeni Ürün Ekle" data-ar="إضافة منتج جديد" data-en="Add New Product">Yeni Ürün Ekle</button>
+    <h3>Ürünler</h3>
+    <button class="btn-modern btn-primary" onclick="openProductForm()">+ Yeni Ürün Ekle</button>
     <div class="list" id="productsList"></div>
   </section>
 
   <!-- KULLANICILAR -->
   <section id="users" class="section">
-    <h3 data-tr="Kullanıcılar" data-ar="المستخدمون" data-en="Users">Kullanıcılar</h3>
-    <button class="btn btn-primary" onclick="openUserForm()" data-tr="Yeni Kullanıcı" data-ar="مستخدم جديد" data-en="New User">Yeni Kullanıcı</button>
+    <h3>Kullanıcılar</h3>
+    <button class="btn-modern btn-primary" onclick="openUserForm()">+ Yeni Kullanıcı Ekle</button>
     <div class="list" id="usersList"></div>
   </section>
 </div>
@@ -129,34 +144,30 @@
 
 <script>
   const KOLI_KG = 6;
-  let currentLang = localStorage.getItem('lang') || 'tr';
-  let currentSection = 'orders';
   let orders = JSON.parse(localStorage.getItem('orders') || '[]');
   let products = JSON.parse(localStorage.getItem('products') || '[]');
-  let users = JSON.parse(localStorage.getItem('users') || '[{user:"admin",pass:"Adalya123"}]');
+  let users = JSON.parse(localStorage.getItem('users') || '[{user:"admin",pass:"Adalya"}]');
+  let currentSection = 'orders';
 
   /* GİRİŞ KONTROLÜ */
-    (() => {
-      if (localStorage.getItem('giris') !== '1' || localStorage.getItem('currentUser') !== 'admin') {
-        alert(currentLang === 'ar' ? 'غير مصرح به' : currentLang === 'en' ? 'Unauthorized' : 'Yetkisiz erişim');
-        window.location.href = 'index.html';
-      }
-    })();
+  (() => {
+    if (localStorage.getItem('giris') !== '1') {
+      alert('Yetkisiz erişim');
+      window.location.href = 'index.html';
+      return;
+    }
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser !== 'admin') {
+      alert('Sadece admin girebilir');
+      window.location.href = 'index.html';
+    }
+  })();
 
-  /* DİL */
-  function setLang(lang) {
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-    document.documentElement.lang = lang;
-    document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
-    document.querySelectorAll('[data-tr]').forEach(el => el.textContent = el.dataset[lang] || el.dataset.tr);
-    // sekme butonları
-    document.querySelectorAll('.tab').forEach((b, i) => {
-      const keys = ['orders', 'products', 'users'];
-      b.textContent = b.dataset[lang] || b.dataset.tr;
-      b.classList.toggle('active', keys[i] === currentSection);
-    });
-    renderAll();
+  /* ÇIKIŞ */
+  function cikis() {
+    localStorage.removeItem('giris');
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
   }
 
   /* SEKME DEĞİŞTİRME */
@@ -169,13 +180,6 @@
     renderAll();
   }
 
-  /* ÇIKIŞ */
-  function cikis() {
-    localStorage.removeItem('giris');
-    localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
-  }
-
   /* RENDER ALL */
   function renderAll() {
     if (currentSection === 'orders') renderOrders();
@@ -183,54 +187,63 @@
     if (currentSection === 'users') renderUsers();
   }
 
-  /* SİPARİŞLER */
+  /* SİPARİŞLER – ÇİZGİLİ TABLO + FİLTRE + SÜTUN TOPLAMLARI */
   function renderOrders() {
-    const list = document.getElementById('ordersList');
-    list.innerHTML = '';
-    if (orders.length === 0) {
-      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">${currentLang === 'ar' ? 'لا توجد طلبات' : currentLang === 'en' ? 'No orders' : 'Sipariş yok'}</div>`;
-      return;
-    }
-    orders.forEach((o, i) => {
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.draggable = true;
-      item.ondragstart = (e) => e.dataTransfer.setData('orderIndex', i);
-      item.ondragover = (e) => e.preventDefault();
-      item.ondrop = (e) => reorderOrders(i, parseInt(e.dataTransfer.getData('orderIndex')));
-      item.innerHTML = `
-        <div class="info">
-          <div class="name">${o.customer} - ${o.code}</div>
-          <div class="sub">${o.totals.koli} Koli / ${o.totals.kg} KG | ${o.ship} | ${o.date}</div>
-        </div>
-        <div class="actions">
-          <button class="edit-btn" onclick="viewOrder(${i})" data-tr="Gör" data-ar="عرض" data-en="View">Gör</button>
-          <button class="edit-btn" onclick="editOrder(${i})" data-tr="Düzenle" data-ar="تعديل" data-en="Edit">Düzenle</button>
-          <button class="del-btn" onclick="deleteOrder(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>
-        </div>
+    const tbody = document.getElementById('ordersBody');
+    tbody.innerHTML = '';
+    let tot50 = 0, tot250 = 0, tot1000 = 0, totKoli = 0, totKg = 0;
+    const filtered = orders.filter(o =>
+      o.customer.toLowerCase().includes(document.getElementById('orderFilter').value.toLowerCase()) ||
+      o.code.toLowerCase().includes(document.getElementById('orderFilter').value.toLowerCase())
+    );
+    filtered.forEach((o, i) => {
+      let row50 = 0, row250 = 0, row1000 = 0, rowKoli = 0, rowKg = 0;
+      o.items.forEach(it => { row50 += it[50]; row250 += it[250]; row1000 += it[1000]; rowKoli += it.koli; rowKg += it.kg; });
+      tot50 += row50; tot250 += row250; tot1000 += row1000; totKoli += rowKoli; totKg += rowKg;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${o.customer}</td>
+        <td>${o.code}</td>
+        <td>${o.ship}</td>
+        <td style="background:var(--g50)">${row50}</td>
+        <td style="background:var(--g250)">${row250}</td>
+        <td style="background:var(--g1000)">${row1000}</td>
+        <td>${rowKoli}</td>
+        <td>${rowKg}</td>
+        <td class="actions">
+          <button class="edit-btn" onclick="viewOrder(${i})">Gör</button>
+          <button class="edit-btn" onclick="editOrder(${i})">Düzenle</button>
+          <button class="del-btn" onclick="deleteOrder(${i})">Sil</button>
+        </td>
       `;
-      list.appendChild(item);
+      tbody.appendChild(tr);
     });
+    // toplam satırı
+    const totTr = document.createElement('tr');
+    totTr.style.cssText = 'border-top:2px solid var(--border);font-weight:700;color:var(--gold)';
+    totTr.innerHTML = `
+      <td colspan="3">Toplam</td>
+      <td style="background:var(--g50)">${tot50}</td>
+      <td style="background:var(--g250)">${tot250}</td>
+      <td style="background:var(--g1000)">${tot1000}</td>
+      <td>${totKoli}</td>
+      <td>${totKg}</td>
+      <td>-</td>
+    `;
+    tbody.appendChild(totTr);
   }
-  function reorderOrders(to, from) {
-    if (to === from) return;
-    const [moved] = orders.splice(from, 1);
-    orders.splice(to, 0, moved);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    renderOrders();
-  }
+  function filterOrders() { renderOrders(); }
   function viewOrder(idx) {
     const o = orders[idx];
     openModal(`
-      <p><strong data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri:</strong> ${o.customer}</p>
-      <p><strong data-tr="Kod" data-ar="الرمز" data-en="Code">Kod:</strong> ${o.code}</p>
-      <p><strong data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim:</strong> ${o.ship}</p>
-      <p><strong data-tr="Tarih" data-ar="التاريخ" data-en="Date">Tarih:</strong> ${o.date}</p>
-      <hr style="margin:10px 0">
+      <p><strong>Müşteri:</strong> ${o.customer}</p>
+      <p><strong>Kod:</strong> ${o.code}</p>
+      <p><strong>Gönderim:</strong> ${o.ship}</p>
+      <p><strong>Tarih:</strong> ${o.date}</p>
       <table style="width:100%;font-size:.8rem;border-collapse:collapse;border:1px solid var(--border)">
-        <thead><tr><th data-tr="Ürün" data-ar="المنتج" data-en="Product">Ürün</th><th style="background:var(--g50)">50 G</th><th style="background:var(--g250)">250 G</th><th style="background:var(--g1000)">1000 G</th><th data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</th></tr></thead>
+        <thead><tr><th>Ürün</th><th style="background:var(--g50)">50G</th><th style="background:var(--g250)">250G</th><th style="background:var(--g1000)">1000G</th><th>Toplam</th></tr></thead>
         <tbody>
-          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50] || 0}</td><td style="background:var(--g250)">${it[250] || 0}</td><td style="background:var(--g1000)">${it[1000] || 0}</td><td>${it.koli} Koli / ${it.kg} KG</td></tr>`).join('')}
+          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50]}</td><td style="background:var(--g250)">${it[250]}</td><td style="background:var(--g1000)">${it[1000]}</td><td>${it.koli} Koli / ${it.kg} KG</td></tr>`).join('')}
         </tbody>
       </table>
     `);
@@ -238,13 +251,13 @@
   function editOrder(idx) {
     const o = orders[idx];
     openModal(`
-      <label data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri</label>
+      <label>Müşteri</label>
       <input type="text" id="editCustomer" value="${o.customer}">
-      <label data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim</label>
-      <select id="editShip"><option value="road" ${o.ship==='Karayolu'?'selected':''} data-tr="Karayolu" data-ar="الطريق البري" data-en="Road">Karayolu</option><option value="sea" ${o.ship==='Denizyolu'?'selected':''} data-tr="Denizyolu" data-ar="البحرية" data-en="Sea">Denizyolu</option><option value="air" ${o.ship==='Havayolu'?'selected':''} data-tr="Havayolu" data-ar="الجوية" data-en="Air">Havayolu</option></select>
+      <label>Gönderim</label>
+      <select id="editShip"><option value="road" ${o.ship==='Karayolu'?'selected':''}>Karayolu</option><option value="sea" ${o.ship==='Denizyolu'?'selected':''}>Denizyolu</option><option value="air" ${o.ship==='Havayolu'?'selected':''}>Havayolu</option></select>
     `, `
-      <button class="save-btn" onclick="saveEditOrder(${idx})" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
-      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+      <button class="save-btn" onclick="saveEditOrder(${idx})">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
     `);
   }
   function saveEditOrder(idx) {
@@ -255,18 +268,18 @@
     renderOrders();
   }
   function deleteOrder(idx) {
-    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    if (!confirm('Silmek istediğinize emin misiniz?')) return;
     orders.splice(idx, 1);
     localStorage.setItem('orders', JSON.stringify(orders));
     renderOrders();
   }
 
-  /* ÜRÜNLER */
+  /* ÜRÜNLER – SIRALAMALI LİSTE */
   function renderProducts() {
     const list = document.getElementById('productsList');
     list.innerHTML = '';
     if (products.length === 0) {
-      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">${currentLang === 'ar' ? 'لا توجد منتجات' : currentLang === 'en' ? 'No products' : 'Ürün yok'}</div>`;
+      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">Ürün yok</div>`;
       return;
     }
     products.forEach((p, i) => {
@@ -277,14 +290,14 @@
       item.ondragover = (e) => e.preventDefault();
       item.ondrop = (e) => reorderProducts(i, parseInt(e.dataTransfer.getData('productIndex')));
       item.innerHTML = `
-        <img src="${p.img}" alt="${p[currentLang]||p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
+        <img src="${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
         <div class="info">
-          <div class="name">${p[currentLang]||p.tr}</div>
-          <div class="sub">${p.tr} | ${p.ar} | ${p.en}</div>
+          <div class="name">${p.tr}</div>
+          <div class="sub">${p.ar} | ${p.en}</div>
         </div>
         <div class="actions">
-          <button class="edit-btn" onclick="editProduct(${i})" data-tr="Düzenle" data-ar="تعديل" data-en="Edit">Düzenle</button>
-          <button class="del-btn" onclick="deleteProduct(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>
+          <button class="edit-btn" onclick="editProduct(${i})">Düzenle</button>
+          <button class="del-btn" onclick="deleteProduct(${i})">Sil</button>
         </div>
       `;
       list.appendChild(item);
@@ -297,20 +310,20 @@
     localStorage.setItem('products', JSON.stringify(products));
     renderProducts();
   }
-  function openProductForm(idx = null) {
-    const p = idx !== null ? products[idx] : {tr:'',ar:'',en:'',img:''};
+  function editProduct(idx) {
+    const p = products[idx];
     openModal(`
-      <label data-tr="Türkçe İsim" data-ar="الاسم التركي" data-en="Turkish Name">Türkçe İsim</label>
+      <label>Türkçe İsim</label>
       <input type="text" id="prodTr" value="${p.tr}">
-      <label data-tr="Arapça İsim" data-ar="الاسم العربي" data-en="Arabic Name">Arapça İsim</label>
+      <label>Arapça İsim</label>
       <input type="text" id="prodAr" value="${p.ar}">
-      <label data-tr="İngilizce İsim" data-ar="الاسم الإنجليزي" data-en="English Name">İngilizce İsim</label>
+      <label>İngilizce İsim</label>
       <input type="text" id="prodEn" value="${p.en}">
-      <label data-tr="Resim Yolu (PNG)" data-ar="مسار الصورة (PNG)" data-en="Image Path (PNG)">Resim Yolu (PNG)</label>
+      <label>Resim Yolu (PNG)</label>
       <input type="text" id="prodImg" placeholder="img/urun1.png" value="${p.img}">
     `, `
-      <button class="save-btn" onclick="saveProduct(${idx})" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
-      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+      <button class="save-btn" onclick="saveProduct(${idx})">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
     `);
   }
   function saveProduct(idx) {
@@ -321,20 +334,20 @@
       en: document.getElementById('prodEn').value.trim(),
       img: document.getElementById('prodImg').value.trim()
     };
-    if (!p.tr || !p.ar || !p.en) { alert(currentLang === 'ar' ? 'الأسماء مطلوبة' : currentLang === 'en' ? 'Names are required' : 'İsimler zorunlu'); return; }
+    if (!p.tr || !p.ar || !p.en) { alert('İsimler zorunlu'); return; }
     if (idx !== null) products[idx] = p; else products.push(p);
     localStorage.setItem('products', JSON.stringify(products));
     closeModal();
     renderProducts();
   }
   function deleteProduct(idx) {
-    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    if (!confirm('Silmek istediğinize emin misiniz?')) return;
     products.splice(idx, 1);
     localStorage.setItem('products', JSON.stringify(products));
     renderProducts();
   }
 
-  /* KULLANICILAR */
+  /* KULLANICILAR – VARSAYILAN ŞİFRE "Adalya" */
   function renderUsers() {
     const list = document.getElementById('usersList');
     list.innerHTML = '';
@@ -344,11 +357,11 @@
       item.innerHTML = `
         <div class="info">
           <div class="name">${u.user}</div>
-          <div class="sub">${u.user === 'admin' ? (currentLang === 'ar' ? 'مدير' : currentLang === 'en' ? 'Admin' : 'Yönetici') : (currentLang === 'ar' ? 'مستخدم' : currentLang === 'en' ? 'User' : 'Kullanıcı')}</div>
+          <div class="sub">${u.user === 'admin' ? 'Yönetici' : 'Kullanıcı'} – Şifre: ${u.pass}</div>
         </div>
         <div class="actions">
-          <button class="edit-btn" onclick="resetPassword(${i})" data-tr="Şifre Sıfırla" data-ar="إعادة تعيين كلمة المرور" data-en="Reset Password">Şifre Sıfırla</button>
-          ${u.user !== 'admin' ? `<button class="del-btn" onclick="deleteUser(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>` : ''}
+          <button class="edit-btn" onclick="resetPassword(${i})">Şifre Sıfırla</button>
+          ${u.user !== 'admin' ? `<button class="del-btn" onclick="deleteUser(${i})">Sil</button>` : ''}
         </div>
       `;
       list.appendChild(item);
@@ -356,34 +369,32 @@
   }
   function openUserForm() {
     openModal(`
-      <label data-tr="Kullanıcı Adı" data-ar="اسم المستخدم" data-en="Username">Kullanıcı Adı</label>
-      <input type="text" id="newUser">
-      <label data-tr="Şifre" data-ar="كلمة المرور" data-en="Password">Şifre</label>
-      <input type="password" id="newPass">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="newUser" placeholder="örn. ahmet">
     `, `
-      <button class="save-btn" onclick="saveUser()" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
-      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+      <button class="save-btn" onclick="saveUser()">Kaydet (şifre: Adalya)</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
     `);
   }
   function saveUser() {
     const u = document.getElementById('newUser').value.trim();
-    const p = document.getElementById('newPass').value.trim();
-    if (!u || !p) { alert(currentLang === 'ar' ? 'جميع الحقول مطلوبة' : currentLang === 'en' ? 'All fields are required' : 'Tüm alanlar zorunlu'); return; }
-    if (users.find(x => x.user === u)) { alert(currentLang === 'ar' ? 'المستخدم موجود' : currentLang === 'en' ? 'User exists' : 'Kullanıcı var'); return; }
-    users.push({user: u, pass: p});
+    if (!u) { alert('Kullanıcı adı zorunlu'); return; }
+    if (users.find(x => x.user === u)) { alert('Kullanıcı var'); return; }
+    users.push({user: u, pass: 'Adalya'});
     localStorage.setItem('users', JSON.stringify(users));
     closeModal();
     renderUsers();
   }
   function resetPassword(idx) {
-    const newPass = Math.random().toString(36).slice(-8);
-    if (!confirm(`${currentLang === 'ar' ? 'كلمة المرور الجديدة' : currentLang === 'en' ? 'New password' : 'Yeni şifre'}: ${newPass}\n${currentLang === 'ar' ? 'هل تريد المتابعة؟' : currentLang === 'en' ? 'Do you want to continue?' : 'Devam etmek istiyor musun?'}`)) return;
+    const newPass = 'Adalya';
+    if (!confirm(`Yeni şifre: ${newPass}\nDevam etmek istiyor musun?`)) return;
     users[idx].pass = newPass;
     localStorage.setItem('users', JSON.stringify(users));
-    alert(currentLang === 'ar' ? 'تم التحديث' : currentLang === 'en' ? 'Updated' : 'Güncellendi');
+    alert('Şifre sıfırlandı');
+    renderUsers();
   }
   function deleteUser(idx) {
-    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    if (!confirm('Silmek istediğinize emin misiniz?')) return;
     users.splice(idx, 1);
     localStorage.setItem('users', JSON.stringify(users));
     renderUsers();
@@ -401,7 +412,6 @@
 
   /* BAŞLAT */
   window.onload = () => {
-    setLang(currentLang);
     changeTab('orders');
   };
 </script>
