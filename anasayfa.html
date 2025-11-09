@@ -138,8 +138,11 @@
 <!-- GRAMAJ TOPLAMLARI -->
 <section class="gram-totals" id="gramTotals"></section>
 
-<!-- MODAL BUTON -->
-<button class="modal-btn" onclick="showSummary()" data-tr="Sipariş Oluştur" data-ar="إنشاء الطلب" data-en="Create Order">Sipariş Oluştur</button>
+<!-- BUTONLAR -->
+<div style="display:flex;gap:12px;justify-content:center;padding:12px">
+  <button class="modal-btn" onclick="showSummary()" data-tr="Sipariş Oluştur" data-ar="إنشاء الطلب" data-en="Create Order">Sipariş Oluştur</button>
+  <button class="modal-btn" onclick="kayitliSiparisler()" data-tr="Siparişlerim" data-ar="طلباتي" data-en="My Orders">Siparişlerim</button>
+</div>
 
 <!-- MODAL -->
 <div class="modal" id="summaryModal">
@@ -181,10 +184,13 @@
     localStorage.setItem('lang', lang);
     document.documentElement.lang = lang;
     document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
+    // başlıklar
     document.querySelectorAll('[data-tr]').forEach(el => el.textContent = el.dataset[lang] || el.dataset.tr);
+    // placeholder
     document.querySelectorAll('[data-tr-placeholder]').forEach(el => el.placeholder = el.dataset[lang + 'Placeholder'] || el.dataset.trPlaceholder);
+    // üst butonlar
     document.querySelectorAll('.lang-top button').forEach(b => b.classList.toggle('active', b.title.includes(lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'Türkçe')));
-    renderProducts(); // başlıkları güncelle
+    // veri koru – sadece başlıkları güncelle
     updateGramTotals();
     shipCards();
   }
@@ -201,7 +207,7 @@
   /* ÜRÜN VERİSİ */
   const products = [
     {id:1, tr:'Çikolatalı Gofret', ar:'كوفريت بالشوكولاتة', en:'Chocolate Wafer', img:'https://via.placeholder.com/220x110?text=Gofret'},
-    {id:2, tr:'Süt 1 L',           ar:'حليب ١ لتر',         en:'Milk 1 L',         img:'https://via.placeholder.com/220x110?text=Sut'},
+    {id:2, tr:'Süt 1 L',           ar:'حليب ١ لتر',         en:'Milk 1 L',         img:'https://via.placeholder.com/220x110?text=Süt'},
     {id:3, tr:'Yumurta 6\'lı',     ar:'بيض ٦ قطع',          en:'Eggs 6 pcs',       img:'https://via.placeholder.com/220x110?text=Yumurta'}
   ];
 
@@ -240,9 +246,9 @@
         <table>
           <thead><tr><th data-tr="Gram" data-ar="غرام" data-en="Gram">Gram</th><th data-tr="Koli" data-ar="كولا" data-en="Carton">Koli</th><th data-tr="KG" data-ar="كجم" data-en="KG">KG</th></tr></thead>
           <tbody>
-            <tr class="tr-50"><td data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</td><td><input type="text" maxlength="6" data-g="50" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="50"> </td></tr>
-            <tr class="tr-250"><td data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</td><td><input type="text" maxlength="6" data-g="250" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="250"> </td></tr>
-            <tr class="tr-1000"><td data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</td><td><input type="text" maxlength="6" data-g="1000" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="1000"> </td></tr>
+            <tr class="tr-50"><td data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="50" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="50"> </td></tr>
+            <tr class="tr-250"><td data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="250" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="250"> </td></tr>
+            <tr class="tr-1000"><td data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="1000" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="1000"> </td></tr>
           </tbody>
           <tfoot><tr class="total-row"><td data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</td><td data-total-koli="0"> </td><td data-total-kg="0"> </td></tr></tfoot>
         </table>
@@ -313,6 +319,7 @@
     currentOrder = { customer, code, ship: shipText, items, totals, date: new Date().toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR') };
 
     const body = document.getElementById('summaryBody');
+    // **RENKLİ ve KENAR ÇİZGİLİ** özet tablosu
     body.innerHTML = `
       <p><strong data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri:</strong> ${customer}</p>
       <p><strong data-tr="Sipariş Kodu" data-ar="رمز الطلب" data-en="Order Code">Sipariş Kodu:</strong> ${code}</p>
@@ -324,13 +331,29 @@
         <tbody>
           ${items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50] === 0 ? ' ' : it[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g250)">${it[250] === 0 ? ' ' : it[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g1000)">${it[1000] === 0 ? ' ' : it[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${it.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td></tr>`).join('')}
         </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);font-weight:700;color:var(--gold)">
+            <td data-tr="Genel Toplam" data-ar="الإجمالي الكلي" data-en="Grand Total">Genel Toplam</td>
+            <td>${totals[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
+            <td>${totals[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
+            <td>${totals[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
+            <td>${totals.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${totals.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td>
+          </tr>
+        </tfoot>
       </table>
-      <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
-      <p style="font-weight:700;color:var(--gold)"><span data-tr="Genel Toplam" data-ar="الإجمالي الكلي" data-en="Grand Total">Genel Toplam</span>: ${totals.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${totals.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</p>
     `;
     document.getElementById('summaryModal').classList.add('show');
   }
   function closeModal() { document.getElementById('summaryModal').classList.remove('show'); }
+
+  /* KAYDET */
+  function saveOrder() {
+    orders.push(currentOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    closeModal();
+    alert(currentLang === 'ar' ? '✅ تم الحفظ' : currentLang === 'en' ? '✅ Saved' : '✅ Kaydedildi');
+    yeniSiparis();
+  }
 
   /* WHATSAPP */
   function shareWhatsApp() {
