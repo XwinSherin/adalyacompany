@@ -31,7 +31,7 @@
     .btn-primary{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(212,175,55,.3)}
     .btn-secondary{background:#eee;color:var(--text)}
 
-    /* TABLO + FİLTRE */
+    /* SİPARİŞLER – ÇİZGİLİ TABLO + FİLTRE + SÜTUN TOPLAMLARI */
     .table-container{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;margin-bottom:12px}
     .filter-input{width:100%;max-width:300px;padding:8px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem;margin-bottom:10px}
     table{width:100%;border-collapse:collapse;font-size:.8rem}
@@ -43,7 +43,7 @@
     .edit-btn{background:var(--gold);color:#fff}
     .del-btn{background:var(--error);color:#fff}
 
-    /* LİSTE + SIRALAMA */
+    /* ÜRÜNLER – SIRALAMALI LİSTE */
     .list{display:flex;flex-direction:column;gap:10px}
     .item{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;display:flex;align-items:center;gap:10px;cursor:grab}
     .item.dragging{opacity:.6;cursor:grabbing}
@@ -69,7 +69,7 @@
     script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
     document.head.appendChild(script);
-  </style>
+</style>
 </head>
 <body>
 
@@ -91,7 +91,7 @@
 
 <!-- İÇERİK -->
 <div class="content">
-  <!-- SİPARİŞLER -->
+  <!-- SİPARİŞLER – ÇİZGİLİ TABLO + FİLTRE + SÜTUN TOPLAMLARI -->
   <section id="orders" class="section active">
     <h3>Siparişler</h3>
     <div class="table-container">
@@ -102,9 +102,9 @@
             <th>Müşteri</th>
             <th>Kod</th>
             <th>Gönderim</th>
-            <th>50G</th>
-            <th>250G</th>
-            <th>1000G</th>
+            <th style="background:var(--g50)">50G</th>
+            <th style="background:var(--g250)">250G</th>
+            <th style="background:var(--g1000)">1000G</th>
             <th>Toplam Koli</th>
             <th>Toplam KG</th>
             <th>İşlem</th>
@@ -115,14 +115,14 @@
     </div>
   </section>
 
-  <!-- ÜRÜNLER -->
+  <!-- ÜRÜNLER – SIRALAMALI LİSTE -->
   <section id="products" class="section">
     <h3>Ürünler</h3>
     <button class="btn-modern btn-primary" onclick="openProductForm()">+ Yeni Ürün Ekle</button>
     <div class="list" id="productsList"></div>
   </section>
 
-  <!-- KULLANICILAR -->
+  <!-- KULLANICILAR – VARSAYILAN ŞİFRE "Adalya" -->
   <section id="users" class="section">
     <h3>Kullanıcılar</h3>
     <button class="btn-modern btn-primary" onclick="openUserForm()">+ Yeni Kullanıcı Ekle</button>
@@ -147,7 +147,6 @@
   let orders = JSON.parse(localStorage.getItem('orders') || '[]');
   let products = JSON.parse(localStorage.getItem('products') || '[]');
   let users = JSON.parse(localStorage.getItem('users') || '[{user:"admin",pass:"Adalya"}]');
-  let currentSection = 'orders';
 
   /* GİRİŞ KONTROLÜ */
   (() => {
@@ -176,7 +175,6 @@
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active');
     document.getElementById(tab).classList.add('active');
-    currentSection = tab;
     renderAll();
   }
 
@@ -236,32 +234,55 @@
   function viewOrder(idx) {
     const o = orders[idx];
     openModal(`
+      <h3>Sipariş Özeti</h3>
       <p><strong>Müşteri:</strong> ${o.customer}</p>
       <p><strong>Kod:</strong> ${o.code}</p>
       <p><strong>Gönderim:</strong> ${o.ship}</p>
       <p><strong>Tarih:</strong> ${o.date}</p>
       <table style="width:100%;font-size:.8rem;border-collapse:collapse;border:1px solid var(--border)">
-        <thead><tr><th>Ürün</th><th style="background:var(--g50)">50G</th><th style="background:var(--g250)">250G</th><th style="background:var(--g1000)">1000G</th><th>Toplam</th></tr></thead>
+        <thead><tr><th>Ürün</th><th style="background:var(--g50)">50G</th><th style="background:var(--g250)">250G</th><th style="background:var(--g1000)">1000G</th><th>Koli</th><th>KG</th></tr></thead>
         <tbody>
-          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50]}</td><td style="background:var(--g250)">${it[250]}</td><td style="background:var(--g1000)">${it[1000]}</td><td>${it.koli} Koli / ${it.kg} KG</td></tr>`).join('')}
+          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50]}</td><td style="background:var(--g250)">${it[250]}</td><td style="background:var(--g1000)">${it[1000]}</td><td>${it.koli}</td><td>${it.kg}</td></tr>`).join('')}
         </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--border);font-weight:700;color:var(--gold)">
+            <td colspan="4">Toplam</td>
+            <td>${o.items.reduce((a, b) => a + b.koli, 0)}</td>
+            <td>${o.items.reduce((a, b) => a + b.kg, 0)}</td>
+          </tr>
+        </tfoot>
       </table>
     `);
   }
   function editOrder(idx) {
     const o = orders[idx];
     openModal(`
-      <label>Müşteri</label>
-      <input type="text" id="editCustomer" value="${o.customer}">
+      <h3>Sipariş Düzenle (Müşteri: ${o.customer})</h3>
       <label>Gönderim</label>
       <select id="editShip"><option value="road" ${o.ship==='Karayolu'?'selected':''}>Karayolu</option><option value="sea" ${o.ship==='Denizyolu'?'selected':''}>Denizyolu</option><option value="air" ${o.ship==='Havayolu'?'selected':''}>Havayolu</option></select>
+      <label>Ürün Koli Sayıları (değiştirebilirsiniz)</label>
+      <div id="editItems"></div>
     `, `
       <button class="save-btn" onclick="saveEditOrder(${idx})">Kaydet</button>
       <button class="cancel-btn" onclick="closeModal()">İptal</button>
     `);
+    // ürün koli girişleri
+    const div = document.getElementById('editItems');
+    div.innerHTML = o.items.map((it, i) => `
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <span style="flex:1">${it.name}</span>
+        <input type="number" min="0" step="1" value="${it[50]}" onchange="updateEditItem(${idx},${i},50,this.value)">
+        <input type="number" min="0" step="1" value="${it[250]}" onchange="updateEditItem(${idx},${i},250,this.value)">
+        <input type="number" min="0" step="1" value="${it[1000]}" onchange="updateEditItem(${idx},${i},1000,this.value)">
+      </div>
+    `).join('');
+  }
+  function updateEditItem(orderIdx, itemIdx, gram, val) {
+    orders[orderIdx].items[itemIdx][gram] = Number(val);
+    orders[orderIdx].items[itemIdx].koli = orders[orderIdx].items[itemIdx][50] + orders[orderIdx].items[itemIdx][250] + orders[orderIdx].items[itemIdx][1000];
+    orders[orderIdx].items[itemIdx].kg = orders[orderIdx].items[itemIdx].koli * KOLI_KG;
   }
   function saveEditOrder(idx) {
-    orders[idx].customer = document.getElementById('editCustomer').value.trim();
     orders[idx].ship = document.getElementById('editShip').selectedOptions[0].text;
     localStorage.setItem('orders', JSON.stringify(orders));
     closeModal();
@@ -274,7 +295,7 @@
     renderOrders();
   }
 
-  /* ÜRÜNLER – SIRALAMALI LİSTE */
+  /* ÜRÜNLER – SIRALAMALI LİSTE + MODAL */
   function renderProducts() {
     const list = document.getElementById('productsList');
     list.innerHTML = '';
@@ -310,9 +331,10 @@
     localStorage.setItem('products', JSON.stringify(products));
     renderProducts();
   }
-  function editProduct(idx) {
-    const p = products[idx];
+  function openProductForm(idx = null) {
+    const p = idx !== null ? products[idx] : {tr:'',ar:'',en:'',img:''};
     openModal(`
+      <h3>${idx !== null ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}</h3>
       <label>Türkçe İsim</label>
       <input type="text" id="prodTr" value="${p.tr}">
       <label>Arapça İsim</label>
@@ -369,6 +391,7 @@
   }
   function openUserForm() {
     openModal(`
+      <h3>Yeni Kullanıcı Ekle</h3>
       <label>Kullanıcı Adı</label>
       <input type="text" id="newUser" placeholder="örn. ahmet">
     `, `
@@ -412,7 +435,7 @@
 
   /* BAŞLAT */
   window.onload = () => {
-    changeTab('orders');
+    renderOrders();
   };
 </script>
 
