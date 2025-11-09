@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title data-tr="Admin Paneli" data-ar="لوحة الإدارة" data-en="Admin Panel">Admin Paneli</title>
+  <style>
+    :root{--gold:#d4af37;--gold-dark:#b8941f;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;--g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;--radius:16px;--shadow:0 4px 18px rgba(0,0,0,.08)}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+    body{background:var(--bg);color:var(--text)}
+    /* ÜST BAR */
+    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
+    .logo-name{display:flex;align-items:center;gap:8px}
+    .logo-name img{height:40px;border-radius:8px}
+    .logo-name .company{font-size:1.05rem;font-weight:700}
+    .lang-top{display:flex;gap:6px}
+    .lang-top button{min-width:40px;height:28px;border:none;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
+    .lang-top button.active{background:var(--gold);color:#fff}
+    .logout-btn{background:var(--error);color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:.8rem;font-weight:700;cursor:pointer}
+
+    /* SEKMELER */
+    .tabs{display:flex;gap:4px;padding:8px 16px;background:var(--surface);position:sticky;top:48px;z-index:980}
+    .tab{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
+    .tab.active{background:var(--gold);color:#fff}
+
+    /* İÇERİK */
+    .content{padding:12px 16px;max-width:900px;margin:auto}
+    .section{display:none}
+    .section.active{display:block}
+
+    /* LİSTE + SIRALAMA */
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;display:flex;align-items:center;gap:10px;cursor:grab}
+    .item.dragging{opacity:.6;cursor:grabbing}
+    .item img{width:60px;height:60px;object-fit:cover;border-radius:8px}
+    .item .info{flex:1;font-size:.85rem}
+    .item .info .name{font-weight:700}
+    .item .info .sub{color:var(--text);opacity:.7}
+    .item .actions{display:flex;gap:6px}
+    .item .actions button{padding:6px 8px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
+    .edit-btn{background:var(--gold);color:#fff}
+    .del-btn{background:var(--error);color:#fff}
+
+    /* FORM */
+    .form{background:var(--surface);border-radius:var(--radius);padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+    .form input,.form select,.form textarea{width:100%;padding:8px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.85rem}
+    .form textarea{resize:vertical;min-height:60px}
+    .form-buttons{display:flex;gap:8px}
+    .form-buttons button{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
+    .save-btn{background:var(--gold);color:#fff}
+    .cancel-btn{background:#eee;color:var(--text)}
+
+    /* MODAL */
+    .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
+    .modal.show{display:flex}
+    .modal-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+    .modal-header h2{font-size:1.1rem}
+    .close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text)}
+    .modal-body{padding:16px;font-size:.85rem;line-height:1.5}
+    .modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
+    .modal-footer button{flex:1;padding:8px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
+    .save-btn{background:var(--gold);color:#fff}
+    .cancel-btn{background:#eee;color:var(--text)}
+
+    /* EXCEL CDN */
+    script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    document.head.appendChild(script);
+</style>
+</head>
+<body>
+
+<!-- ÜST BAR -->
+<header class="top-bar">
+  <div class="logo-name">
+    <img src="img/adalyalogo.jpg" alt="Logo">
+    <span class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</span>
+  </div>
+  <div class="lang-top">
+    <button onclick="setLang('tr')" title="Türkçe" class="active">TR</button>
+    <button onclick="setLang('ar')" title="العربية">AR</button>
+    <button onclick="setLang('en')" title="English">EN</button>
+  </div>
+  <button class="logout-btn" onclick="cikis()" data-tr="Çıkış" data-ar="خروج" data-en="Logout">Çıkış</button>
+</header>
+
+<!-- SEKMELER -->
+<div class="tabs">
+  <button class="tab active" onclick="changeTab('orders')" data-tr="Siparişler" data-ar="الطلبات" data-en="Orders">Siparişler</button>
+  <button class="tab" onclick="changeTab('products')" data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</button>
+  <button class="tab" onclick="changeTab('users')" data-tr="Kullanıcılar" data-ar="المستخدمون" data-en="Users">Kullanıcılar</button>
+</div>
+
+<!-- İÇERİK -->
+<div class="content">
+  <!-- SİPARİŞLER -->
+  <section id="orders" class="section active">
+    <h3 data-tr="Siparişler" data-ar="الطلبات" data-en="Orders">Siparişler</h3>
+    <div class="list" id="ordersList"></div>
+  </section>
+
+  <!-- ÜRÜNLER -->
+  <section id="products" class="section">
+    <h3 data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</h3>
+    <button class="btn btn-primary" onclick="openProductForm()" data-tr="Yeni Ürün Ekle" data-ar="إضافة منتج جديد" data-en="Add New Product">Yeni Ürün Ekle</button>
+    <div class="list" id="productsList"></div>
+  </section>
+
+  <!-- KULLANICILAR -->
+  <section id="users" class="section">
+    <h3 data-tr="Kullanıcılar" data-ar="المستخدمون" data-en="Users">Kullanıcılar</h3>
+    <button class="btn btn-primary" onclick="openUserForm()" data-tr="Yeni Kullanıcı" data-ar="مستخدم جديد" data-en="New User">Yeni Kullanıcı</button>
+    <div class="list" id="usersList"></div>
+  </section>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Modal</h2>
+      <button class="close-modal" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<script>
+  const KOLI_KG = 6;
+  let currentLang = localStorage.getItem('lang') || 'tr';
+  let currentSection = 'orders';
+  let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  let products = JSON.parse(localStorage.getItem('products') || '[]');
+  let users = JSON.parse(localStorage.getItem('users') || '[{user:"admin",pass:"Adalya123"}]');
+
+  /* GİRİŞ KONTROLÜ */
+    (() => {
+      if (localStorage.getItem('giris') !== '1' || localStorage.getItem('currentUser') !== 'admin') {
+        alert(currentLang === 'ar' ? 'غير مصرح به' : currentLang === 'en' ? 'Unauthorized' : 'Yetkisiz erişim');
+        window.location.href = 'index.html';
+      }
+    })();
+
+  /* DİL */
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
+    document.querySelectorAll('[data-tr]').forEach(el => el.textContent = el.dataset[lang] || el.dataset.tr);
+    // sekme butonları
+    document.querySelectorAll('.tab').forEach((b, i) => {
+      const keys = ['orders', 'products', 'users'];
+      b.textContent = b.dataset[lang] || b.dataset.tr;
+      b.classList.toggle('active', keys[i] === currentSection);
+    });
+    renderAll();
+  }
+
+  /* SEKME DEĞİŞTİRME */
+  function changeTab(tab) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active');
+    document.getElementById(tab).classList.add('active');
+    currentSection = tab;
+    renderAll();
+  }
+
+  /* ÇIKIŞ */
+  function cikis() {
+    localStorage.removeItem('giris');
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+  }
+
+  /* RENDER ALL */
+  function renderAll() {
+    if (currentSection === 'orders') renderOrders();
+    if (currentSection === 'products') renderProducts();
+    if (currentSection === 'users') renderUsers();
+  }
+
+  /* SİPARİŞLER */
+  function renderOrders() {
+    const list = document.getElementById('ordersList');
+    list.innerHTML = '';
+    if (orders.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">${currentLang === 'ar' ? 'لا توجد طلبات' : currentLang === 'en' ? 'No orders' : 'Sipariş yok'}</div>`;
+      return;
+    }
+    orders.forEach((o, i) => {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.draggable = true;
+      item.ondragstart = (e) => e.dataTransfer.setData('orderIndex', i);
+      item.ondragover = (e) => e.preventDefault();
+      item.ondrop = (e) => reorderOrders(i, parseInt(e.dataTransfer.getData('orderIndex')));
+      item.innerHTML = `
+        <div class="info">
+          <div class="name">${o.customer} - ${o.code}</div>
+          <div class="sub">${o.totals.koli} Koli / ${o.totals.kg} KG | ${o.ship} | ${o.date}</div>
+        </div>
+        <div class="actions">
+          <button class="edit-btn" onclick="viewOrder(${i})" data-tr="Gör" data-ar="عرض" data-en="View">Gör</button>
+          <button class="edit-btn" onclick="editOrder(${i})" data-tr="Düzenle" data-ar="تعديل" data-en="Edit">Düzenle</button>
+          <button class="del-btn" onclick="deleteOrder(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+  function reorderOrders(to, from) {
+    if (to === from) return;
+    const [moved] = orders.splice(from, 1);
+    orders.splice(to, 0, moved);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    renderOrders();
+  }
+  function viewOrder(idx) {
+    const o = orders[idx];
+    openModal(`
+      <p><strong data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri:</strong> ${o.customer}</p>
+      <p><strong data-tr="Kod" data-ar="الرمز" data-en="Code">Kod:</strong> ${o.code}</p>
+      <p><strong data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim:</strong> ${o.ship}</p>
+      <p><strong data-tr="Tarih" data-ar="التاريخ" data-en="Date">Tarih:</strong> ${o.date}</p>
+      <hr style="margin:10px 0">
+      <table style="width:100%;font-size:.8rem;border-collapse:collapse;border:1px solid var(--border)">
+        <thead><tr><th data-tr="Ürün" data-ar="المنتج" data-en="Product">Ürün</th><th style="background:var(--g50)">50 G</th><th style="background:var(--g250)">250 G</th><th style="background:var(--g1000)">1000 G</th><th data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</th></tr></thead>
+        <tbody>
+          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50] || 0}</td><td style="background:var(--g250)">${it[250] || 0}</td><td style="background:var(--g1000)">${it[1000] || 0}</td><td>${it.koli} Koli / ${it.kg} KG</td></tr>`).join('')}
+        </tbody>
+      </table>
+    `);
+  }
+  function editOrder(idx) {
+    const o = orders[idx];
+    openModal(`
+      <label data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri</label>
+      <input type="text" id="editCustomer" value="${o.customer}">
+      <label data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim</label>
+      <select id="editShip"><option value="road" ${o.ship==='Karayolu'?'selected':''} data-tr="Karayolu" data-ar="الطريق البري" data-en="Road">Karayolu</option><option value="sea" ${o.ship==='Denizyolu'?'selected':''} data-tr="Denizyolu" data-ar="البحرية" data-en="Sea">Denizyolu</option><option value="air" ${o.ship==='Havayolu'?'selected':''} data-tr="Havayolu" data-ar="الجوية" data-en="Air">Havayolu</option></select>
+    `, `
+      <button class="save-btn" onclick="saveEditOrder(${idx})" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+    `);
+  }
+  function saveEditOrder(idx) {
+    orders[idx].customer = document.getElementById('editCustomer').value.trim();
+    orders[idx].ship = document.getElementById('editShip').selectedOptions[0].text;
+    localStorage.setItem('orders', JSON.stringify(orders));
+    closeModal();
+    renderOrders();
+  }
+  function deleteOrder(idx) {
+    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    orders.splice(idx, 1);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    renderOrders();
+  }
+
+  /* ÜRÜNLER */
+  function renderProducts() {
+    const list = document.getElementById('productsList');
+    list.innerHTML = '';
+    if (products.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">${currentLang === 'ar' ? 'لا توجد منتجات' : currentLang === 'en' ? 'No products' : 'Ürün yok'}</div>`;
+      return;
+    }
+    products.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.draggable = true;
+      item.ondragstart = (e) => e.dataTransfer.setData('productIndex', i);
+      item.ondragover = (e) => e.preventDefault();
+      item.ondrop = (e) => reorderProducts(i, parseInt(e.dataTransfer.getData('productIndex')));
+      item.innerHTML = `
+        <img src="${p.img}" alt="${p[currentLang]||p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
+        <div class="info">
+          <div class="name">${p[currentLang]||p.tr}</div>
+          <div class="sub">${p.tr} | ${p.ar} | ${p.en}</div>
+        </div>
+        <div class="actions">
+          <button class="edit-btn" onclick="editProduct(${i})" data-tr="Düzenle" data-ar="تعديل" data-en="Edit">Düzenle</button>
+          <button class="del-btn" onclick="deleteProduct(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+  function reorderProducts(to, from) {
+    if (to === from) return;
+    const [moved] = products.splice(from, 1);
+    products.splice(to, 0, moved);
+    localStorage.setItem('products', JSON.stringify(products));
+    renderProducts();
+  }
+  function openProductForm(idx = null) {
+    const p = idx !== null ? products[idx] : {tr:'',ar:'',en:'',img:''};
+    openModal(`
+      <label data-tr="Türkçe İsim" data-ar="الاسم التركي" data-en="Turkish Name">Türkçe İsim</label>
+      <input type="text" id="prodTr" value="${p.tr}">
+      <label data-tr="Arapça İsim" data-ar="الاسم العربي" data-en="Arabic Name">Arapça İsim</label>
+      <input type="text" id="prodAr" value="${p.ar}">
+      <label data-tr="İngilizce İsim" data-ar="الاسم الإنجليزي" data-en="English Name">İngilizce İsim</label>
+      <input type="text" id="prodEn" value="${p.en}">
+      <label data-tr="Resim Yolu (PNG)" data-ar="مسار الصورة (PNG)" data-en="Image Path (PNG)">Resim Yolu (PNG)</label>
+      <input type="text" id="prodImg" placeholder="img/urun1.png" value="${p.img}">
+    `, `
+      <button class="save-btn" onclick="saveProduct(${idx})" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+    `);
+  }
+  function saveProduct(idx) {
+    const p = {
+      id: idx !== null ? products[idx].id : Date.now(),
+      tr: document.getElementById('prodTr').value.trim(),
+      ar: document.getElementById('prodAr').value.trim(),
+      en: document.getElementById('prodEn').value.trim(),
+      img: document.getElementById('prodImg').value.trim()
+    };
+    if (!p.tr || !p.ar || !p.en) { alert(currentLang === 'ar' ? 'الأسماء مطلوبة' : currentLang === 'en' ? 'Names are required' : 'İsimler zorunlu'); return; }
+    if (idx !== null) products[idx] = p; else products.push(p);
+    localStorage.setItem('products', JSON.stringify(products));
+    closeModal();
+    renderProducts();
+  }
+  function deleteProduct(idx) {
+    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    products.splice(idx, 1);
+    localStorage.setItem('products', JSON.stringify(products));
+    renderProducts();
+  }
+
+  /* KULLANICILAR */
+  function renderUsers() {
+    const list = document.getElementById('usersList');
+    list.innerHTML = '';
+    users.forEach((u, i) => {
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.innerHTML = `
+        <div class="info">
+          <div class="name">${u.user}</div>
+          <div class="sub">${u.user === 'admin' ? (currentLang === 'ar' ? 'مدير' : currentLang === 'en' ? 'Admin' : 'Yönetici') : (currentLang === 'ar' ? 'مستخدم' : currentLang === 'en' ? 'User' : 'Kullanıcı')}</div>
+        </div>
+        <div class="actions">
+          <button class="edit-btn" onclick="resetPassword(${i})" data-tr="Şifre Sıfırla" data-ar="إعادة تعيين كلمة المرور" data-en="Reset Password">Şifre Sıfırla</button>
+          ${u.user !== 'admin' ? `<button class="del-btn" onclick="deleteUser(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>` : ''}
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+  function openUserForm() {
+    openModal(`
+      <label data-tr="Kullanıcı Adı" data-ar="اسم المستخدم" data-en="Username">Kullanıcı Adı</label>
+      <input type="text" id="newUser">
+      <label data-tr="Şifre" data-ar="كلمة المرور" data-en="Password">Şifre</label>
+      <input type="password" id="newPass">
+    `, `
+      <button class="save-btn" onclick="saveUser()" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()" data-tr="İptal" data-ar="إلغاء" data-en="Cancel">İptal</button>
+    `);
+  }
+  function saveUser() {
+    const u = document.getElementById('newUser').value.trim();
+    const p = document.getElementById('newPass').value.trim();
+    if (!u || !p) { alert(currentLang === 'ar' ? 'جميع الحقول مطلوبة' : currentLang === 'en' ? 'All fields are required' : 'Tüm alanlar zorunlu'); return; }
+    if (users.find(x => x.user === u)) { alert(currentLang === 'ar' ? 'المستخدم موجود' : currentLang === 'en' ? 'User exists' : 'Kullanıcı var'); return; }
+    users.push({user: u, pass: p});
+    localStorage.setItem('users', JSON.stringify(users));
+    closeModal();
+    renderUsers();
+  }
+  function resetPassword(idx) {
+    const newPass = Math.random().toString(36).slice(-8);
+    if (!confirm(`${currentLang === 'ar' ? 'كلمة المرور الجديدة' : currentLang === 'en' ? 'New password' : 'Yeni şifre'}: ${newPass}\n${currentLang === 'ar' ? 'هل تريد المتابعة؟' : currentLang === 'en' ? 'Do you want to continue?' : 'Devam etmek istiyor musun?'}`)) return;
+    users[idx].pass = newPass;
+    localStorage.setItem('users', JSON.stringify(users));
+    alert(currentLang === 'ar' ? 'تم التحديث' : currentLang === 'en' ? 'Updated' : 'Güncellendi');
+  }
+  function deleteUser(idx) {
+    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
+    users.splice(idx, 1);
+    localStorage.setItem('users', JSON.stringify(users));
+    renderUsers();
+  }
+
+  /* MODAL */
+  function openModal(body, footer = '') {
+    document.getElementById('modalBody').innerHTML = body;
+    document.getElementById('modalFooter').innerHTML = footer;
+    document.getElementById('modal').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+  }
+
+  /* BAŞLAT */
+  window.onload = () => {
+    setLang(currentLang);
+    changeTab('orders');
+  };
+</script>
+
+</body>
+</html>
