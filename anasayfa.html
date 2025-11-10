@@ -29,13 +29,13 @@
     .lang-float button:active{transform:scale(.92)}
     .lang-float button.active{background:var(--gold);color:#fff}
 
-    /* ÜRÜN KARTI */
+    /* ÜRÜN KARTI – RESİMSİZ */
     .products-container{display:grid;gap:18px;max-width:1600px;margin:0 auto;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr))}
     .product-card{border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow);transition:transform .3s ease, box-shadow .3s ease;will-change:transform;opacity:0;transform:translateY(20px)}
     .product-card.visible{opacity:1;transform:translateY(0)}
     .product-card:hover{transform:translateY(-5px);box-shadow:0 12px 35px rgba(0,0,0,.15)}
-    .product-img{width:100%;height:120px;object-fit:cover;border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}
-    .product-name{background:linear-gradient(135deg, #4facfe, #00f2fe);color:#fff;padding:10px 8px;text-align:center;font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .product-name{background:linear-gradient(135deg, var(--gold), #f1c40f);color:#fff;padding:10px 8px;text-align:center;font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
     .product-table{width:100%;border-collapse:collapse;font-size:0.9rem;table-layout:fixed}
     .product-table th,.product-table td{width:33.33%;padding:8px 4px;text-align:center;border:1px solid var(--border);height:36px}
@@ -59,7 +59,7 @@
   <div class="user-info"><span id="userName"></span><button class="logout-btn" onclick="cikis()">Çıkış</button></div>
 </header>
 
-<!-- ==========  ÜRÜN KARTI  ========== -->
+<!-- ==========  ÜRÜN KARTI – RESİMSİZ  ========== -->
 <section id="products" class="section active">
   <h3 data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</h3>
   <input id="prodSearch" class="filter-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
@@ -159,7 +159,7 @@
     renderProducts();
   }
 
-  /* ----------  ÜRÜN GÖSTER  ---------- */
+  /* ----------  ÜRÜN GÖSTER – RESİMSİZ  ---------- */
   function renderProducts(){
     const list = document.getElementById('productsList');
     list.innerHTML = '';
@@ -173,16 +173,15 @@
       const card = document.createElement('div');
       card.className = 'product-card';
       card.innerHTML = `
-        <img class="product-img" src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/300x120?text=PNG'">
         <div class="product-name" data-tr="${p.tr}" data-ar="${p.ar}" data-en="${p.en}">${p.tr}</div>
         <table class="product-table">
           <thead><tr><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
           <tbody>
-            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 50, ${i})"></td><td class="kg-50">0</td></tr>
-            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 250, ${i})"></td><td class="kg-250">0</td></tr>
-            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 1000, ${i})"></td><td class="kg-1000">0</td></tr>
+            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this, 50, ${i})"></td><td class="kg-50"></td></tr>
+            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this, 250, ${i})"></td><td class="kg-250"></td></tr>
+            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this, 1000, ${i})"></td><td class="kg-1000"></td></tr>
           </tbody>
-          <tfoot><tr><td>Toplam</td><td class="total-koli">0</td><td class="total-kg">0</td></tr></tfoot>
+          <tfoot><tr><td>Toplam</td><td class="total-koli"></td><td class="total-kg"></td></tr></tfoot>
         </table>
       `;
       list.appendChild(card);
