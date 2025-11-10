@@ -14,12 +14,13 @@
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
     body{background:var(--bg);color:var(--text)}
 
-    /* ÜST BAR + DİL */
+    /* ÜST BAR – MAD-12 */
     .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
     .logo-name{display:flex;align-items:center;gap:12px}
     .logo-name img{height:48px;border-radius:12px}
     .logo-name .company{font-size:1.2rem;font-weight:700;letter-spacing:.5px}
-    .top-actions{display:flex;align-items:center;gap:12px}
+    .top-right{display:flex;align-items:center;gap:12px}
+    .user-info{font-size:.9rem;font-weight:600}
     .logout-btn{background:var(--error);color:#fff;border:none;border-radius:var(--radius);padding:10px 16px;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
     .logout-btn:hover{background:#c0392b}
     .lang-group{display:flex;gap:6px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:6px;border-radius:30px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
@@ -34,19 +35,19 @@
     .order-header{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;text-align:center}
     .order-code{font-size:1.5rem;font-weight:700;color:var(--gold);letter-spacing:1px}
 
-    /* GÖNDERİM – 3 İKONLU BUTON */
+    /* GÖNDERİM – MAD-1 */
     .gonderim-buttons{display:flex;gap:12px;justify-content:center;margin-bottom:16px}
     .gonderim-btn{flex:1;padding:12px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s ease;background:#eee;color:var(--text)}
     .gonderim-btn.active{background:var(--gold);color:#fff;transform:scale(1.05)}
     .gonderim-btn span{font-size:1.4rem;margin-right:6px}
 
-    /* ARAMA – BÜYÜK + X */
+    /* ARAMA – MAD-2 */
     .search-box{position:relative;max-width:600px;margin:0 auto 24px}
     .search-input{width:100%;padding:14px 48px 14px 16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1.1rem;transition:border-color .2s}
     .search-input:focus{border-color:var(--gold);outline:none}
     .clear-search{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.4rem;color:var(--text);cursor:pointer;padding:4px}
 
-    /* ÜRÜN KARTLARI – 5/SATIR */
+    /* ÜRÜN KARTLARI – MAD-5 / MAD-6 */
     .products-container{display:grid;gap:12px;max-width:1600px;margin:0 auto;grid-template-columns:repeat(5, 1fr);}
     @media (max-width: 1400px){.products-container{grid-template-columns:repeat(4, 1fr);}}
     @media (max-width: 1100px){.products-container{grid-template-columns:repeat(3, 1fr);}}
@@ -73,19 +74,36 @@
     .koli-input input{width:100%;padding:6px 4px;border:1.4px solid var(--border);border-radius:6px;font-family:'Courier New', monospace;font-size:0.85rem;font-weight:600;text-align:center;direction:ltr;transition:border-color .2s}
     .koli-input input:focus{border-color:var(--gold);outline:none}
 
-    /* BUTONLAR – YUKARIDA */
+    /* BUTONLAR – MAD-8 */
     .action-buttons{display:flex;gap:12px;margin:24px 0;justify-content:center}
     .btn-modern{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s}
     .btn-modern:active{transform:scale(.96)}
     .btn-primary{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(212,175,55,.3)}
     .btn-secondary{background:#eee;color:var(--text)}
 
-    /* ALT MODAL – GENEL TOPLAM */
-    .bottom-total{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-top:2px solid var(--gold);padding:12px 16px;z-index:1000;display:flex;align-items:center;justify-content:space-between;font-size:1rem;font-weight:600;box-shadow:0 -4px 20px rgba(0,0,0,.1)}
+    /* ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI – MAD-7 */
+    .bottom-total{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(6px);
+      border-top: 2px solid var(--gold);
+      padding: 12px 16px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+    }
     .bottom-total .label{color:var(--gold);}
     .bottom-total .val{font-family:'Courier New', monospace;}
+    .gram-totals{font-size:.8rem;display:flex;gap:12px}
 
-    /* MODAL – SİPARİŞ ÖZETİ */
+    /* MODAL – SİPARİŞ ÖZETİ – MAD-10 */
     .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
     .modal.show{display:flex}
     .modal-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
@@ -97,18 +115,24 @@
     .modal-footer button{flex:1;padding:10px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
     .save-btn{background:var(--gold);color:#fff}
     .btn-secondary{background:#eee;color:var(--text)}
+    .excel-btn{background:#217346;color:#fff}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:.9rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s ease;z-index:3000}
+    .toast.show{transform:translateX(-50%) translateY(0)}
   </style>
 </head>
 <body>
 
 <header class="top-bar">
   <div class="logo-name"><img src="img/adalyalogo.jpg" alt="Logo"><span class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</span></div>
-  <div class="top-actions">
+  <div class="top-right">
     <div class="lang-group">
-      <button class="active" onclick="setLang('tr')" title="Türkçe">Türkçe</button>
-      <button onclick="setLang('ar')" title="العربية">العربية</button>
-      <button onclick="setLang('en')" title="English">English</button>
+      <button class="active" onclick="setLang('tr')" title="Türkçe">TR</button>
+      <button onclick="setLang('ar')" title="العربية">AR</button>
+      <button onclick="setLang('en')" title="English">EN</button>
     </div>
+    <span class="user-info" id="userName"></span>
     <button class="logout-btn" onclick="cikis()">Çıkış</button>
   </div>
 </header>
@@ -122,25 +146,23 @@
     <div data-tr="Sipariş Kodu" data-ar="كود الطلب" data-en="Order Code">Sipariş Kodu</div>
   </div>
 
-  <!-- 2) Gönderim – 3 İKONLU BUTON -->
+  <!-- 2) Gönderim Şekli – 3 İkonlu Buton -->
   <div class="gonderim-buttons">
     <button class="gonderim-btn active" data-value="Karayolu" onclick="setGonderim('Karayolu')" data-tr="Karayolu" data-ar="الطريق البري" data-en="Road"><span>🚛</span><span>Karayolu</span></button>
     <button class="gonderim-btn" data-value="Denizyolu" onclick="setGonderim('Denizyolu')" data-tr="Denizyolu" data-ar="الطريق البحري" data-en="Sea"><span>🚢</span><span>Denizyolu</span></button>
     <button class="gonderim-btn" data-value="Havayolu" onclick="setGonderim('Havayolu')" data-tr="Havayolu" data-ar="الطريق الجوي" data-en="Air"><span>✈️</span><span>Havayolu</span></button>
   </div>
 
-  <!-- 3) ARAMA – BÜYÜK + X -->
-  <div class="search-box">
-    <input id="prodSearch" class="search-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
-    <button class="clear-search" onclick="clearSearch()" title="Temizle">×</button>
-  </div>
-
-  <!-- 4) ÜRÜN KARTLARI – 5/SATIR -->
+  <!-- 3) ÜRÜN KARTLARI – RESİMLİ -->
   <section id="products" class="section active">
+    <div class="search-box">
+      <input id="prodSearch" class="search-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
+      <button class="clear-search" onclick="clearSearch()" title="Temizle">×</button>
+    </div>
     <div class="products-container" id="productsList"></div>
   </section>
 
-  <!-- 5) BUTONLAR – YUKARIDA -->
+  <!-- 4) BUTONLAR -->
   <div class="action-buttons">
     <button class="btn-modern btn-secondary" onclick="newOrder()" data-tr="Yeni Sipariş" data-ar="طلب جديد" data-en="New Order">Yeni Sipariş</button>
     <button class="btn-modern btn-primary" onclick="openOrderModal()" data-tr="Sipariş Özeti & Kaydet" data-ar="ملخص الطلب & حفظ" data-en="Order Summary & Save">Sipariş Özeti & Kaydet</button>
@@ -149,10 +171,18 @@
 
 </div>
 
-<!-- ==========  ALT MODAL – GENEL TOPLAM  ========== -->
+<!-- ==========  ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI  ========== -->
 <div class="bottom-total" id="bottomTotal">
-  <span class="label" data-tr="Genel Toplam" data-ar="المجموع العام" data-en="Grand Total">Genel Toplam</span>
-  <span class="val" id="bottomTotalKg">0 kg</span>
+  <div>
+    <span class="label" data-tr="Genel Toplam" data-ar="المجموع العام" data-en="Grand Total">Genel Toplam</span>
+    <span class="val" id="bottomTotalKg">0 kg</span>
+  </div>
+  <div class="gram-totals">
+    <span>50G: <span id="tot50">0</span> kg</span>
+    <span>250G: <span id="tot250">0</span> kg</span>
+    <span>1000G: <span id="tot1000">0</span> kg</span>
+    <span>Koli: <span id="totKoli">0</span></span>
+  </div>
 </div>
 
 <!-- ==========  MODAL – SİPARİŞ ÖZETİ  ========== -->
@@ -166,23 +196,17 @@
     <div class="modal-footer">
       <button class="save-btn" onclick="saveOrder()" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
       <button class="btn-secondary" onclick="shareOrder()" data-tr="Paylaş" data-ar="مشاركة" data-en="Share">Paylaş</button>
-      <button class="btn-secondary" onclick="downloadExcel()" data-tr="Excel İndir" data-ar="تحميل إكسل" data-en="Download Excel">Excel İndir</button>
+      <button class="excel-btn" onclick="downloadExcel()" data-tr="Excel İndir" data-ar="تحميل إكسل" data-en="Download Excel">Excel İndir</button>
       <button class="btn-secondary" onclick="closeOrderModal()" data-tr="Kapat" data-ar="إغلاق" data-en="Close">Kapat</button>
     </div>
   </div>
 </div>
 
 <script>
-  /* ----------  TOKEN (Yöntem A)  ---------- */
-  let TOKEN = sessionStorage.getItem('ghToken');
-  if (!TOKEN) {
-    TOKEN = prompt('GitHub Personal Access Token (repo scope):');
-    if (TOKEN) sessionStorage.setItem('ghToken', TOKEN);
-  }
+  const TOKEN = sessionStorage.getItem('ghToken') || (()=>{ const t=prompt('GitHub Personal Access Token (repo scope):'); if(t) sessionStorage.setItem('ghToken',t); return t; })();
   const REPO   = 'XwinSherin/adalyacompany';
   const BRANCH = 'main';
 
-  /* ----------  GİTHUB'A YAZMA FONKSİYONU  ---------- */
   async function writeGitHubFile(path, content, message){
     if (!TOKEN) { alert('Token yok'); return; }
     try {
@@ -194,298 +218,308 @@
         const fileInfo = await getRes.json();
         sha = fileInfo.sha;
       } else if (getRes.status === 404) {
-        // dosya yok → oluştur
-      } else {
-        throw new Error('SHA alınamadı: ' + getRes.statusText);
-      }
+        // yeni dosya
+      } else throw new Error('SHA alınamadı');
       const encoded = btoa(unescape(encodeURIComponent(content)));
       const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
         method : 'PUT',
         headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type': 'application/json' },
         body   : JSON.stringify({ message, content: encoded, sha })
       });
-      if (!putRes.ok) {
-        const err = await putRes.json();
-        throw new Error(err.message || putRes.statusText);
-      }
-      console.log(`${path} güncellendi`);
-      showToast(message);
+      if (!putRes.ok) throw new Error((await putRes.json()).message || putRes.statusText);
     } catch (err) {
       console.error(err);
       alert('Yazma hatası: ' + err.message);
     }
   }
 
-  /* ----------  DEĞİŞKENLER  ---------- */
   let products   = [];
   let orders     = [];
   let currentOrder = {};
   const KOLI_KG  = 6;
   let gonderim   = 'Karayolu';
+  let lang       = localStorage.getItem('lang') || 'tr';
 
-  /* ----------  GİRİŞ KONTROLÜ  ---------- */
   (()=>{
-    if(sessionStorage.getItem('role')!=='user'){ location.href='index.html'; }
+    if(sessionStorage.getItem('role')!=='user') location.href='index.html';
     document.getElementById('userName').textContent=sessionStorage.getItem('currentUser')||'Bayi';
   })();
 
-  /* ----------  ÇIKIŞ  ---------- */
-  function cikis(){
-    sessionStorage.clear();
-    location.href='index.html';
-  }
+  function cikis(){ sessionStorage.clear(); location.href='index.html'; }
 
-  /* ----------  DİL – TAMAM (ARAPÇA SAYILAR DAHİL)  ---------- */
-  function setLang(lang){
-    localStorage.setItem('lang',lang);
+  function setLang(l){
+    lang=l; localStorage.setItem('lang',lang);
     document.documentElement.lang=lang;
     document.documentElement.dir=(lang==='ar'?'rtl':'ltr');
-    // metinler
     document.querySelectorAll('[data-tr]').forEach(el=>el.textContent=el.dataset[lang]||el.dataset.tr);
-    // gönderim butonları
     document.querySelectorAll('.gonderim-btn').forEach(btn=>{
       const val = btn.dataset.value;
-      const trMap = {Karayolu:'Karayolu',Denizyolu:'Denizyolu',Havayolu:'Havayolu'};
-      const arMap = {Karayolu:'الطريق البري',Denizyolu:'الطريق البحري',Havayolu:'الطريق الجوي'};
-      const enMap = {Karayolu:'Road',Denizyolu:'Sea',Havayolu:'Air'};
-      const map = lang==='ar'?arMap:lang==='en'?enMap:trMap;
-      btn.innerHTML = `<span>${btn.querySelector('span:first-child').textContent}</span><span>${map[val]}</span>`;
+      const trMap={Karayolu:'Karayolu',Denizyolu:'Denizyolu',Havayolu:'Havayolu'};
+      const arMap={Karayolu:'الطريق البري',Denizyolu:'الطريق البحري',Havayolu:'الطريق الجوي'};
+      const enMap={Karayolu:'Road',Denizyolu:'Sea',Havayolu:'Air'};
+      const map=lang==='ar'?arMap:lang==='en'?enMap:trMap;
+      btn.querySelector('span:last-child').textContent=map[val];
     });
-    // alt toplam
-    const kg = document.getElementById('bottomTotalKg').textContent.replace(/[^0-9]/g,'');
-    document.getElementById('bottomTotalKg').textContent = lang==='ar'? kg + ' كغ' : lang==='en'? kg + ' kg' : kg + ' kg';
-    document.querySelector('.bottom-total .label').textContent = lang==='ar'?'المجموع العام':lang==='en'?'Grand Total':'Genel Toplam';
-    // lang butonları
     document.querySelectorAll('.lang-group button').forEach(b=>b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية':lang==='en'?'English':'Türkçe')));
+    renderProducts();
   }
 
-  /* ----------  ARAMA – BÜYÜK + X  ---------- */
-  function clearSearch(){
-    document.getElementById('prodSearch').value='';
-    filterProducts();
-  }
-  function filterProducts(){
-    const search = document.getElementById('prodSearch').value.toLowerCase();
-    document.querySelectorAll('.product-card').forEach(card=>{
-      const name = card.querySelector('.product-name').textContent.toLowerCase();
-      card.style.display = name.includes(search) ? 'block' : 'none';
-    });
+  async function loadProducts(){
+    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json');
+    products=await res.json();
+    products=products.filter(p=>p.active!==false);
+    renderProducts();
+    generateOrderCode();
+    setInterval(updateBottomTotal,300);
   }
 
-  /* ----------  GÖNDERİM  ---------- */
+  function generateOrderCode(){
+    const user=sessionStorage.getItem('currentUser')||'ADL';
+    const today=new Date();
+    const dateStr=String(today.getDate()).padStart(2,'0')+String(today.getMonth()+1).padStart(2,'0')+String(today.getFullYear()).slice(-2);
+    const lastOrder=orders.length?orders[orders.length-1]:{code:user+dateStr+'000'};
+    const lastNum=parseInt(lastOrder.code.slice(-3),10);
+    const newNum=String(lastNum+1).padStart(3,'0');
+    document.getElementById('orderCode').textContent=user+dateStr+newNum;
+  }
+
   function setGonderim(val){
-    gonderim = val;
+    gonderim=val;
     document.querySelectorAll('.gonderim-btn').forEach(b=>b.classList.remove('active'));
     document.querySelector(`[data-value="${val}"]`).classList.add('active');
   }
 
-  /* ----------  YENİ SİPARİŞ – SIFIRLAMA  ---------- */
   function newOrder(){
-    document.querySelectorAll('.koli-input input').forEach(inp=>{
-      inp.value='';
-      inp.dispatchEvent(new Event('input'));
-    });
+    document.querySelectorAll('.koli-input input').forEach(inp=>inp.value='');
+    document.querySelectorAll('.kg-display').forEach(td=>td.textContent='');
+    document.querySelectorAll('.total-koli').forEach(td=>td.textContent='');
+    document.querySelectorAll('.total-kg').forEach(td=>td.textContent='');
     generateOrderCode();
     updateBottomTotal();
   }
 
-  /* ----------  SİPARİŞ KODU  ---------- */
-  function generateOrderCode(){
-    const user = sessionStorage.getItem('currentUser')||'ADL';
-    const today = new Date();
-    const dateStr = today.getDate().toString().padStart(2,'0') + (today.getMonth()+1).toString().padStart(2,'0') + today.getFullYear().toString().slice(-2);
-    const lastOrder = orders.length ? orders[orders.length - 1] : { code: user + dateStr + '000' };
-    const lastNum = parseInt(lastOrder.code.slice(-3), 10);
-    const newNum  = String(lastNum + 1).padStart(3, '0');
-    document.getElementById('orderCode').textContent = user + dateStr + newNum;
-  }
+  function fmt(n){return n.toLocaleString(lang==='ar'?'ar-SA':'tr-TR');}
 
-  /* ----------  ANLIK KG + TOPLAM  ---------- */
-  function updateKg(input, gram, idx) {
-    const val  = Math.max(0, parseInt(input.value) || 0);
-    const kg   = val * KOLI_KG;
-    const card = input.closest('.product-card');
-    card.querySelector(`.kg-${gram}`).textContent = kg.toLocaleString('tr-TR');
-
-    const k50   = parseInt(card.querySelector('.kg-50').textContent.replace(/\./g,'')  || 0);
-    const k250  = parseInt(card.querySelector('.kg-250').textContent.replace(/\./g,'') || 0);
-    const k1000 = parseInt(card.querySelector('.kg-1000').textContent.replace(/\./g,'')|| 0);
-    const totKg   = k50 + k250 + k1000;
-    const totKoli = totKg / KOLI_KG;
-
-    card.querySelector('.total-koli').textContent = totKoli.toLocaleString('tr-TR');
-    card.querySelector('.total-kg').textContent   = totKg.toLocaleString('tr-TR');
+  function updateKg(inp,gr,idx){
+    const val=Math.max(0,parseInt(inp.value)||0);
+    const kg=val*KOLI_KG;
+    const card=inp.closest('.product-card');
+    card.querySelector(`.kg-${gr}`).textContent=fmt(kg);
+    const k50=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
+    const k250=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
+    const k1000=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
+    const totKg=k50+k250+k1000;
+    const totKoli=totKg/KOLI_KG;
+    card.querySelector('.total-koli').textContent=fmt(totKoli);
+    card.querySelector('.total-kg').textContent=fmt(totKg);
     updateBottomTotal();
   }
 
-  /* ----------  MODAL – SİPARİŞ ÖZETİ  ---------- */
+  function updateBottomTotal(){
+    let t50=0,t250=0,t1000=0;
+    document.querySelectorAll('.product-card').forEach(card=>{
+      t50+=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
+      t250+=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
+      t1000+=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
+    });
+    const tot=t50+t250+t1000;
+    document.getElementById('bottomTotalKg').textContent=fmt(tot)+' kg';
+    document.getElementById('tot50').textContent=fmt(t50);
+    document.getElementById('tot250').textContent=fmt(t250);
+    document.getElementById('tot1000').textContent=fmt(t1000);
+    document.getElementById('totKoli').textContent=fmt(tot/KOLI_KG);
+  }
+
+  function clearSearch(){document.getElementById('prodSearch').value='';filterProducts();}
+  function filterProducts(){renderProducts();}
+
+  function renderProducts(){
+    const list=document.getElementById('productsList');
+    list.innerHTML='';
+    const search=document.getElementById('prodSearch').value.toLowerCase();
+    const filtered=products.filter(p=>
+      p.tr.toLowerCase().includes(search)||
+      p.ar.toLowerCase().includes(search)||
+      p.en.toLowerCase().includes(search)
+    );
+    filtered.forEach((p,i)=>{
+      const card=document.createElement('div');
+      card.className='product-card';
+      const name=lang==='ar'?p.ar:lang==='en'?p.en:p.tr;
+      card.innerHTML=`
+        <div class="product-img-box"><img class="product-img" src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${name}" onerror="this.src='https://via.placeholder.com/300x120?text=PNG'"></div>
+        <div class="product-name" data-tr="${p.tr}" data-ar="${p.ar}" data-en="${p.en}">${name}</div>
+        <table class="product-table">
+          <thead><tr><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
+          <tbody>
+            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,50,${i})"></td><td class="kg-50 kg-display"></td></tr>
+            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,250,${i})"></td><td class="kg-250 kg-display"></td></tr>
+            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,1000,${i})"></td><td class="kg-1000 kg-display"></td></tr>
+          </tbody>
+          <tfoot><tr><td>Toplam</td><td class="total-koli"></td><td class="total-kg"></td></tr></tfoot>
+        </table>
+      `;
+      list.appendChild(card);
+      setTimeout(()=>card.classList.add('visible'),i*50);
+    });
+  }
+
   function openOrderModal(){
-    const code = document.getElementById('orderCode').textContent;
-    const body = document.getElementById('orderModalBody');
-    body.innerHTML = `
+    const code=document.getElementById('orderCode').textContent;
+    const body=document.getElementById('orderModalBody');
+    body.innerHTML=`
       <p><strong>Sipariş Kodu:</strong> ${code}</p>
       <p><strong>Gönderim:</strong> ${gonderim}</p>
-      <table class="product-table" id="orderModalTable"></table>
+      <table class="product-table">
+        <thead><tr><th>Ürün</th><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
+        <tbody id="orderModalTable"></tbody>
+      </table>
       <div class="toplamlar">
         <p><strong>Toplam 50G:</strong> <span id="modal50"></span> kg</p>
         <p><strong>Toplam 250G:</strong> <span id="modal250"></span> kg</p>
         <p><strong>Toplam 1000G:</strong> <span id="modal1000"></span> kg</p>
-        <p><strong>Toplam Koli:</strong> <span id="modalKoli"></span></p>
         <p><strong>Genel Toplam:</strong> <span id="modalTotal"></span> kg</p>
       </div>
     `;
-    let m50=0, m250=0, m1000=0, mkoli=0;
+    let m50=0,m250=0,m1000=0;
     document.querySelectorAll('.product-card').forEach(card=>{
-      const k50   = parseInt(card.querySelector('.kg-50').textContent.replace(/\./g,'')  || 0);
-      const k250  = parseInt(card.querySelector('.kg-250').textContent.replace(/\./g,'') || 0);
-      const k1000 = parseInt(card.querySelector('.kg-1000').textContent.replace(/\./g,'')|| 0);
-      const tr = card.querySelector('.product-name').dataset.tr;
-      if(k50>0)  document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-50"><td>${tr}</td><td>50G</td><td>${(k50/6).toLocaleString('tr-TR')}</td><td>${k50.toLocaleString('tr-TR')}</td></tr>`;
-      if(k250>0) document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-250"><td>${tr}</td><td>250G</td><td>${(k250/6).toLocaleString('tr-TR')}</td><td>${k250.toLocaleString('tr-TR')}</td></tr>`;
-      if(k1000>0)document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-1000"><td>${tr}</td><td>1000G</td><td>${(k1000/6).toLocaleString('tr-TR')}</td><td>${k1000.toLocaleString('tr-TR')}</td></tr>`;
-      m50+=k50; m250+=k250; m1000+=k1000; mkoli+=(k50+k250+k1000)/6;
+      const k50=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
+      const k250=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
+      const k1000=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
+      const name=card.querySelector('.product-name').textContent;
+      if(k50>0)  document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-50"><td>${name}</td><td>50G</td><td>${fmt(k50/6)}</td><td>${fmt(k50)}</td></tr>`;
+      if(k250>0) document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-250"><td>${name}</td><td>250G</td><td>${fmt(k250/6)}</td><td>${fmt(k250)}</td></tr>`;
+      if(k1000>0)document.getElementById('orderModalTable').innerHTML+=`<tr class="gram-1000"><td>${name}</td><td>1000G</td><td>${fmt(k1000/6)}</td><td>${fmt(k1000)}</td></tr>`;
+      m50+=k50;m250+=k250;m1000+=k1000;
     });
-    document.getElementById('modal50').textContent   = m50.toLocaleString('tr-TR');
-    document.getElementById('modal250').textContent  = m250.toLocaleString('tr-TR');
-    document.getElementById('modal1000').textContent = m1000.toLocaleString('tr-TR');
-    document.getElementById('modalKoli').textContent = mkoli.toLocaleString('tr-TR');
-    document.getElementById('modalTotal').textContent= (m50+m250+m1000).toLocaleString('tr-TR');
+    document.getElementById('modal50').textContent=fmt(m50);
+    document.getElementById('modal250').textContent=fmt(m250);
+    document.getElementById('modal1000').textContent=fmt(m1000);
+    document.getElementById('modalTotal').textContent=fmt(m50+m250+m1000);
     document.getElementById('orderModal').classList.add('show');
   }
-  function closeOrderModal(){
-    document.getElementById('orderModal').classList.remove('show');
-  }
+  function closeOrderModal(){document.getElementById('orderModal').classList.remove('show');}
 
-  /* ----------  SİPARİŞ KAYDET  ---------- */
   async function saveOrder(){
-    const code = document.getElementById('orderCode').textContent;
-    const items = [];
+    const code=document.getElementById('orderCode').textContent;
+    const items=[];
     document.querySelectorAll('.product-card').forEach(card=>{
-      const k50   = parseInt(card.querySelector('.kg-50').textContent.replace(/\./g,'')  || 0);
-      const k250  = parseInt(card.querySelector('.kg-250').textContent.replace(/\./g,'') || 0);
-      const k1000 = parseInt(card.querySelector('.kg-1000').textContent.replace(/\./g,'')|| 0);
-      const name  = card.querySelector('.product-name').dataset.tr;
+      const k50=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
+      const k250=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
+      const k1000=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
+      const name=card.querySelector('.product-name').dataset.tr;
       if(k50+k250+k1000===0) return;
       items.push({
-        name: name,
-        50: k50/6,
-        250: k250/6,
-        1000: k1000/6,
-        koli: (k50+k250+k1000)/6,
-        kg: k50+k250+k1000
+        product:name,
+        50:k50/6,
+        250:k250/6,
+        1000:k1000/6,
+        koli:(k50+k250+k1000)/6,
+        kg:k50+k250+k1000
       });
     });
-    if(items.length===0){ alert('En az bir ürün girin!'); return; }
-    const order = {
-      customer: sessionStorage.getItem('currentUser')||'Bayi',
-      code: code,
-      ship: gonderim,
-      date: new Date().toISOString(),
-      items: items
+    if(items.length===0){alert('En az bir ürün girin!');return;}
+    const order={
+      user:sessionStorage.getItem('currentUser')||'Bayi',
+      code:code,
+      gonderim:gonderim,
+      date:new Date().toISOString(),
+      items:items,
+      totalKg:items.reduce((a,b)=>a+b.kg,0),
+      totalKoli:items.reduce((a,b)=>a+b.koli,0),
+      status:'pending'
     };
     orders.push(order);
-    await writeGitHubFile('orders.json', JSON.stringify(orders, null, 2), `Sipariş eklendi: ${code}`);
+    await writeGitHubFile('orders.json',JSON.stringify(orders,null,2),`Sipariş eklendi: ${code}`);
     closeOrderModal();
     newOrder();
   }
 
-  /* ----------  PAYLAŞ  ---------- */
-  function shareOrder(){
-    const code = document.getElementById('orderCode').textContent;
-    const text = `Sipariş Kodu: ${code}\nGönderim: ${gonderim}\nToplam: ${document.getElementById('bottomTotalKg').textContent}`;
-    const url  = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  }
-
-  /* ----------  EXCEL İNDİR  ---------- */
   function downloadExcel(){
-    const code = document.getElementById('orderCode').textContent;
-    let csv = 'Ürün,Gramaj,Koli,Kg\n';
-    document.querySelectorAll('#orderModalTable tr').forEach(row=>{
-      const cells = row.querySelectorAll('td');
-      if(cells.length===4) csv += cells[0].textContent + ',' + cells[1].textContent + ',' + cells[2].textContent + ',' + cells[3].textContent + '\n';
+    const code=document.getElementById('orderCode').textContent;
+    let csv='Ürün,Gramaj,Koli,Kg\n';
+    document.querySelectorAll('.product-card').forEach(card=>{
+      const k50=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
+      const k250=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
+      const k1000=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
+      const name=card.querySelector('.product-name').dataset.tr;
+      if(k50>0)  csv+=`${name},50G,${k50/6},${k50}\n`;
+      if(k250>0) csv+=`${name},250G,${k250/6},${k250}\n`;
+      if(k1000>0)csv+=`${name},1000G,${k1000/6},${k1000}\n`;
     });
-    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = code + '.csv';
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(blob);
+    link.download=`${code}.csv`;
     link.click();
   }
 
-  /* ----------  SİPARİŞLERİM  ---------- */
+  function shareOrder(){
+    const code=document.getElementById('orderCode').textContent;
+    const tot=document.getElementById('bottomTotalKg').textContent;
+    const text=`Sipariş Kodum: ${code}\nGönderim: ${gonderim}\nToplam: ${tot}`;
+    const url=`https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url,'_blank');
+  }
+
   async function openMyOrders(){
-    const res = await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
-    const allOrders = await res.json();
-    const myOrders = allOrders.filter(o => o.customer === (sessionStorage.getItem('currentUser')||'Bayi'));
-    const body = document.getElementById('orderModalBody');
-    body.innerHTML = '';
-    if(myOrders.length===0){ body.innerHTML = '<p>Henüz siparişiniz yok.</p>'; }
+    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
+    const all=await res.json();
+    const my=all.filter(o=>o.user===(sessionStorage.getItem('currentUser')||'Bayi'));
+    const body=document.getElementById('orderModalBody');
+    body.innerHTML='';
+    if(my.length===0){body.innerHTML='<p>Henüz siparişiniz yok.</p>';}
     else {
-      myOrders.forEach((o, i) => {
-        body.innerHTML += `
+      my.forEach(o=>{
+        body.innerHTML+=`
           <div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:12px;">
-            <p><strong>Sipariş Kodu:</strong> ${o.code}</p>
-            <p><strong>Gönderim:</strong> ${o.ship}</p>
-            <p><strong>Tarih:</strong> ${new Date(o.date).toLocaleString('tr-TR')}</p>
-            <p><strong>Toplam Kg:</strong> ${o.items.reduce((a,b)=>a+b.kg,0).toLocaleString('tr-TR')} kg</p>
-            <div class="actions"><button class="edit-btn" onclick="viewOrder(${i})">Gör</button><button class="btn-secondary" onclick="shareOrderFromList(${i})">Paylaş</button><button class="del-btn" onclick="deleteOrder(${i})">Sil</button></div>
+            <p><strong>${o.code}</strong> – ${o.gonderim} – ${new Date(o.date).toLocaleString('tr-TR')}</p>
+            <p>Toplam: ${fmt(o.totalKg)} kg – Koli: ${fmt(o.totalKoli)}</p>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <button class="btn-small btn-detail" onclick="viewOrder('${o.code}')">Gör</button>
+              <button class="btn-small btn-secondary" onclick="shareOrderFrom('${o.code}')">Paylaş</button>
+              <button class="btn-small btn-reject" onclick="deleteOrder('${o.code}')">Sil</button>
+            </div>
           </div>
         `;
       });
     }
     document.getElementById('orderModal').classList.add('show');
   }
-  function viewOrder(idx){
-    const order = orders[idx];
-    if(!order) return;
-    const body = document.getElementById('orderModalBody');
-    body.innerHTML = `
-      <p><strong>Sipariş Kodu:</strong> ${order.code}</p>
-      <p><strong>Gönderim:</strong> ${order.ship}</p>
-      <p><strong>Tarih:</strong> ${new Date(order.date).toLocaleString('tr-TR')}</p>
+  async function viewOrder(code){
+    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
+    const all=await res.json();
+    const o=all.find(x=>x.code===code);
+    if(!o)return;
+    const body=document.getElementById('orderModalBody');
+    body.innerHTML=`
+      <p><strong>${o.code}</strong> – ${o.gonderim}</p>
       <table class="product-table">
         <thead><tr><th>Ürün</th><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
-        <tbody id="viewModalTable"></tbody>
+        <tbody>${o.items.map(it=>`<tr class="gram-${it.gram}"><td>${it.product}</td><td>${it.gram}G</td><td>${fmt(it.koli)}</td><td>${fmt(it.kg)}</td></tr>`).join('')}</tbody>
       </table>
-      <p><strong>Toplam Kg:</strong> ${order.items.reduce((a,b)=>a+b.kg,0).toLocaleString('tr-TR')} kg</p>
+      <p>Toplam Koli: ${fmt(o.totalKoli)} – Toplam Kg: ${fmt(o.totalKg)}</p>
     `;
-    document.getElementById('viewModalTable').innerHTML = order.items.map(it=>`<tr class="gram-${Object.keys(it).find(g=>['50','250','1000'].includes(g))}"><td>${it.name}</td><td>${Object.keys(it).find(g=>['50','250','1000'].includes(g))}G</td><td>${it.koli.toLocaleString('tr-TR')}</td><td>${it.kg.toLocaleString('tr-TR')}</td></tr>`).join('');
     document.getElementById('orderModal').classList.add('show');
   }
-  function shareOrderFromList(idx){
-    const order = orders[idx];
-    const text = `Sipariş Kodu: ${order.code}\nGönderim: ${order.ship}\nToplam: ${order.items.reduce((a,b)=>a+b.kg,0).toLocaleString('tr-TR')} kg`;
-    const url  = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+  async function deleteOrder(code){
+    if(!confirm('Siparişi silmek istediğinize emin misiniz?'))return;
+    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
+    let all=await res.json();
+    all=all.filter(o=>o.code!==code);
+    await writeGitHubFile('orders.json',JSON.stringify(all,null,2),`Sipariş silindi: ${code}`);
+    openMyOrders();
   }
-  async function deleteOrder(idx){
-    if(!confirm('Silmek istediğinize emin misiniz?')) return;
-    const code = orders[idx].code;
-    orders.splice(idx, 1);
-    await writeGitHubFile('orders.json', JSON.stringify(orders, null, 2), `Sipariş silindi: ${code}`);
-    openMyOrders(); // listeyi yenile
-  }
-
-  /* ----------  TOAST (KAYDETME ANİMASYONU)  ---------- */
-  function showToast(msg){
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position:fixed; top:20px; left:50%; transform:translateX(-50%);
-      background:var(--gold); color:#fff; padding:12px 24px; border-radius:var(--radius);
-      font-weight:600; z-index:3000; box-shadow:0 4px 20px rgba(0,0,0,.2);
-      animation: toastIn .4s ease;
-    `;
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(()=>{ toast.remove(); }, 2500);
+  function shareOrderFrom(code){
+    const text=`Sipariş Kodum: ${code}`;
+    const url=`https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url,'_blank');
   }
 
-  /* ----------  BAŞLAT  ---------- */
   window.onload=()=>{
-    setLang(localStorage.getItem('lang')||'tr');
+    setLang(lang);
     loadProducts();
   };
 </script>
-
 </body>
 </html>
