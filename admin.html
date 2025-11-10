@@ -35,8 +35,9 @@
     .actions{display:flex;gap:6px;justify-content:center}
     .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
     .edit-btn{background:var(--gold);color:#fff}
+    .del-btn{background:var(--error);color:#fff}
     .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-    .card img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:2px solid var(--gold)}
+    .card img{width:80px;height:80px;object-fit:cover;border-radius:12px;border:2px solid var(--gold)}
     .card .name{font-size:1rem;font-weight:700}
     .card .sub{font-size:.85rem;color:var(--text);opacity:.8}
     .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
@@ -227,28 +228,51 @@
     await writeGitHubFile('orders.json',JSON.stringify(orders,null,2),'Sipariş silindi: '+code);
   }
 
-  /* ----------  ÜRÜNLER – KART + ARAMA + EKLE  ---------- */
+  /* ----------  ÜRÜNLER – MATRIX (küçük kart) + DÜZENLE  ---------- */
   function renderProducts(){
     const list=document.getElementById('productsList');
     list.innerHTML='';
+    list.style.display='grid';
+    list.style.gridTemplateColumns='repeat(auto-fill, minmax(140px, 1fr))';
+    list.style.gap='12px';
     const search=document.getElementById('prodSearch').value.toLowerCase();
     const filtered=products.filter(p=> p.tr.toLowerCase().includes(search)||p.ar.toLowerCase().includes(search)||p.en.toLowerCase().includes(search));
     filtered.forEach((p,i)=>{
       const card=document.createElement('div');
       card.className='card';
       card.innerHTML=`
-        <img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/120x120?text=PNG'">
+        <img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/80x80?text=PNG'">
         <div class="name">${p.tr}</div>
         <div class="sub">${p.ar}</div>
         <div class="sub">${p.en}</div>
-        <div class="actions"><button class="edit-btn" onclick="viewProduct(${i})">Gör</button></div>
+        <div class="actions"><button class="edit-btn" onclick="editProduct(${i})">Düzenle</button></div>
       `;
       list.appendChild(card);
     });
   }
-  function viewProduct(i){
+  function editProduct(i){
     const p=products[i];
-    openModal(`<h3>${p.tr}</h3><img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" style="width:100%;max-width:200px;border-radius:8px;margin-bottom:12px"><p><strong>İngilizce:</strong> ${p.en}</p><p><strong>Arapça:</strong> ${p.ar}</p>`);
+    openModal(`
+      <h3>Ürün Düzenle</h3>
+      <label>Türkçe İsim</label><input id="editTr" type="text" value="${p.tr}">
+      <label>Arapça İsim</label><input id="editAr" type="text" value="${p.ar}">
+      <label>İngilizce İsim</label><input id="editEn" type="text" value="${p.en}">
+      <label>Resim Yolu</label><input id="editImg" type="text" value="${p.img}">
+    `,`
+      <button class="save-btn" onclick="saveEditProduct(${i})">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
+    `);
+  }
+  async function saveEditProduct(idx){
+    const p=products[idx];
+    p.tr=document.getElementById('editTr').value.trim();
+    p.ar=document.getElementById('editAr').value.trim();
+    p.en=document.getElementById('editEn').value.trim();
+    p.img=document.getElementById('editImg').value.trim();
+    if(!p.tr||!p.ar||!p.en){ alert('İsimler zorunlu'); return; }
+    closeModal();
+    renderProducts();
+    await writeGitHubFile('products.json',JSON.stringify(products,null,2),'Ürün düzenlendi: '+p.tr);
   }
   function filterProducts(){ renderProducts(); }
   function addProduct(){
@@ -272,18 +296,22 @@
     await writeGitHubFile('products.json',JSON.stringify(products,null,2),'Yeni ürün: '+p.tr);
   }
 
-  /* ----------  KULLANICILAR – KART + EKLE  ---------- */
+  /* ----------  KULLANICILAR – KART + ŞİFRE SIFIRLA  ---------- */
   function renderUsers(){
     const list=document.getElementById('usersList');
     list.innerHTML='';
+    list.style.display='grid';
+    list.style.gridTemplateColumns='repeat(auto-fill, minmax(160px, 1fr))';
+    list.style.gap='12px';
     if(users.length===0){ list.innerHTML=`<div style="text-align:center;padding:20px">Kullanıcı yok</div>`; return; }
-    users.forEach(u=>{
+    users.forEach((u,i)=>{
       const card=document.createElement('div');
       card.className='card';
       card.innerHTML=`
         <div class="name">${u.user}</div>
         <div class="sub">Şifre: <b>${u.pass}</b></div>
         <div class="sub">Rol: ${u.role==='admin'?'Yönetici':'Bayi'}</div>
+        <div class="actions"><button class="edit-btn" onclick="resetUserPass(${i})">Şifre Sıfırla</button></div>
       `;
       list.appendChild(card);
     });
@@ -310,6 +338,13 @@
     closeModal();
     renderUsers();
     await writeGitHubFile('users.json',JSON.stringify(users,null,2),'Yeni kullanıcı: '+name);
+  }
+  function resetUserPass(i){
+    const np=prompt('Yeni şifre:',users[i].pass);
+    if(np===null)return;
+    users[i].pass=np.trim();
+    renderUsers();
+    writeGitHubFile('users.json',JSON.stringify(users,null,2),'Şifre sıfırlandı: '+users[i].user);
   }
 
   /* ----------  MODAL  ---------- */
