@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Admin Paneli</title>
+  <title>Adalya Admin Paneli</title>
+
   <style>
-    :root{--gold:#d4af37;--gold-dark:#b8941f;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;--g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;--radius:16px;--shadow:0 6px 20px rgba(0,0,0,.08)}
+    :root{
+      --gold:#d4af37;
+      --gold-dark:#b8941f;
+      --bg:#f5f7fa;
+      --surface:#fff;
+      --text:#2c3e50;
+      --error:#e74c3c;
+      --border:#e0e0e0;
+      --g50:#e8f5e9;
+      --g250:#ffebee;
+      --g1000:#e3f2fd;
+      --radius:16px;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+    }
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
     body{background:var(--bg);color:var(--text)}
 
@@ -66,12 +80,7 @@
     .modal-footer button{flex:1;padding:10px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
     .save-btn{background:var(--gold);color:#fff}
     .cancel-btn{background:#eee;color:var(--text)}
-
-    /* EXCEL CDN */
-    script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    document.head.appendChild(script);
-</style>
+  </style>
 </head>
 <body>
 
@@ -101,15 +110,15 @@
       <table id="ordersTable">
         <thead>
           <tr>
-                <th>Müşteri</th>
-                <th>Kod</th>
-                <th>Gönderim</th>
-                <th style="background:var(--g50)">50G</th>
-                <th style="background:var(--g250)">250G</th>
-                <th style="background:var(--g1000)">1000G</th>
-                <th>Toplam Koli</th>
-                <th>Toplam KG</th>
-                <th>İşlem</th>
+            <th>Müşteri</th>
+            <th>Kod</th>
+            <th>Gönderim</th>
+            <th style="background:var(--g50)">50G</th>
+            <th style="background:var(--g250)">250G</th>
+            <th style="background:var(--g1000)">1000G</th>
+            <th>Toplam Koli</th>
+            <th>Toplam KG</th>
+            <th>İşlem</th>
           </tr>
         </thead>
         <tbody id="ordersBody"></tbody>
@@ -120,14 +129,12 @@
   <!-- ÜRÜNLER – SIRALAMALI LİSTE -->
   <section id="products" class="section">
     <h3>Ürünler</h3>
-    <button class="btn-modern btn-primary" onclick="openProductForm()">+ Yeni Ürün Ekle</button>
     <div class="list" id="productsList"></div>
   </section>
 
-  <!-- KULLANICILAR – VARSAYILAN ŞİFRE "Adalya" -->
+  <!-- KULLANICILAR – GITHUB’DAN OKU -->
   <section id="users" class="section">
     <h3>Kullanıcılar</h3>
-    <button class="btn-modern btn-primary" onclick="openUserForm()">+ Yeni Kullanıcı Ekle</button>
     <div class="list" id="usersList"></div>
   </section>
 </div>
@@ -145,63 +152,72 @@
 </div>
 
 <script>
-  const KOLI_KG = 6;
-  let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-  let products = JSON.parse(localStorage.getItem('products') || '[]');
-  let users = JSON.parse(localStorage.getItem('users') || '[{user:"admin",pass:"Adalya"}]');
+  /* ---------- GITHUB RAW URL’LER ---------- */
+  const USERS_URL   = 'https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/users.json';
+  const ORDERS_URL  = 'https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json';
+  const PRODUCTS_URL= 'https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json';
 
-  /* GİRİŞ KONTROLÜ */
-  (() => {
-    if (localStorage.getItem('giris') !== '1') {
+  /* ---------- GLOBAL DEĞİŞKENLER ---------- */
+  let users   = [];
+  let orders  = [];
+  let products= [];
+
+  const KOLI_KG = 6;
+
+  /* ---------- GİRİŞ KONTROLÜ ---------- */
+  (()=>{
+    if(sessionStorage.getItem('role')!=='admin'){
       alert('Yetkisiz erişim');
-      window.location.href = 'index.html';
-      return;
-    }
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser !== 'admin') {
-      alert('Sadece admin girebilir');
-      window.location.href = 'index.html';
+      location.href='index.html';
     }
   })();
 
-  /* ÇIKIŞ */
-  function cikis() {
-    localStorage.removeItem('giris');
-    localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
+  /* ---------- GITHUB’DAN TÜM VERİLERİ ÇEK ---------- */
+  async function loadAll(){
+    try{
+      const [u,o,p] = await Promise.all([
+        fetch(USERS_URL).then(r=>r.json()),
+        fetch(ORDERS_URL).then(r=>r.json()),
+        fetch(PRODUCTS_URL).then(r=>r.json())
+      ]);
+      users   = u;
+      orders  = o;
+ products= p;
+      renderOrders();
+      renderProducts();
+      renderUsers();
+    }catch(err){ alert('Veri çekilemedi: '+err); }
   }
 
-  /* SEKME DEĞİŞTİRME */
-  function changeTab(tab) {
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  /* ---------- ÇIKIŞ ---------- */
+  function cikis(){
+    sessionStorage.clear();
+    location.href='index.html';
+  }
+
+  /* ---------- SEKME DEĞİŞTİRME ---------- */
+  function changeTab(tab){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active');
     document.getElementById(tab).classList.add('active');
-    renderAll();
   }
 
-  /* RENDER ALL */
-  function renderAll() {
-    if (currentSection === 'orders') renderOrders();
-    if (currentSection === 'products') renderProducts();
-    if (currentSection === 'users') renderUsers();
-  }
-
-  /* SİPARİŞLER – ÇİZGİLİ TABLO + FİLTRE + SÜTUN TOPLAMLARI + BINLİK AYIRAC */
-  function renderOrders() {
-    const tbody = document.getElementById('ordersBody');
-    tbody.innerHTML = '';
-    let tot50 = 0, tot250 = 0, tot1000 = 0, totKoli = 0, totKg = 0;
-    const filtered = orders.filter(o =>
+  /* ---------- SİPARİŞLER ---------- */
+  function renderOrders(){
+    const tbody=document.getElementById('ordersBody');
+    tbody.innerHTML='';
+    let tot50=0, tot250=0, tot1000=0, totKoli=0, totKg=0;
+    const filtered=orders.filter(o=>
       o.customer.toLowerCase().includes(document.getElementById('orderFilter').value.toLowerCase()) ||
       o.code.toLowerCase().includes(document.getElementById('orderFilter').value.toLowerCase())
     );
-    filtered.forEach((o, i) => {
-      let row50 = 0, row250 = 0, row1000 = 0, rowKoli = 0, rowKg = 0;
-      o.items.forEach(it => { row50 += it[50]; row250 += it[250]; row1000 += it[1000]; rowKoli += it.koli; rowKg += it.kg; });
-      tot50 += row50; tot250 += row250; tot1000 += row1000; totKoli += rowKoli; totKg += rowKg;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+    filtered.forEach((o,i)=>{
+      let row50=0, row250=0, row1000=0, rowKoli=0, rowKg=0;
+      o.items.forEach(it=>{ row50+=it[50]; row250+=it[250]; row1000+=it[1000]; rowKoli+=it.koli; rowKg+=it.kg; });
+      tot50+=row50; tot250+=row250; tot1000+=row1000; totKoli+=rowKoli; totKg+=rowKg;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
         <td>${o.customer}</td>
         <td>${o.code}</td>
         <td>${o.ship}</td>
@@ -218,10 +234,9 @@
       `;
       tbody.appendChild(tr);
     });
-    // toplam satırı
-    const totTr = document.createElement('tr');
-    totTr.style.cssText = 'border-top:2px solid var(--border);font-weight:700;color:var(--gold)';
-    totTr.innerHTML = `
+    const totTr=document.createElement('tr');
+    totTr.style.cssText='border-top:2px solid var(--border);font-weight:700;color:var(--gold)';
+    totTr.innerHTML=`
       <td colspan="3">Toplam</td>
       <td style="background:var(--g50)">${tot50.toLocaleString('tr-TR')}</td>
       <td style="background:var(--g250)">${tot250.toLocaleString('tr-TR')}</td>
@@ -232,11 +247,11 @@
     `;
     tbody.appendChild(totTr);
   }
-  function filterOrders() { renderOrders(); }
+  function filterOrders(){ renderOrders(); }
 
-  /* SİPARİŞ GÖR / DÜZENLE – MODAL BAŞLIK "Kod" + MÜŞTERİ SABİT */
-  function viewOrder(idx) {
-    const o = orders[idx];
+  /* ---------- SİPARİŞ GÖR / DÜZENLE ---------- */
+  function viewOrder(idx){
+    const o=orders[idx];
     openModal(`
       <h3>Sipariş Özeti</h3>
       <p><strong>Müşteri:</strong> ${o.customer}</p>
@@ -246,33 +261,36 @@
       <table style="width:100%;font-size:.8rem;border-collapse:collapse;border:1px solid var(--border)">
         <thead><tr><th>Ürün</th><th style="background:var(--g50)">50G</th><th style="background:var(--g250)">250G</th><th style="background:var(--g1000)">1000G</th><th>Koli</th><th>KG</th></tr></thead>
         <tbody>
-          ${o.items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50].toLocaleString('tr-TR')}</td><td style="background:var(--g250)">${it[250].toLocaleString('tr-TR')}</td><td style="background:var(--g1000)">${it[1000].toLocaleString('tr-TR')}</td><td>${it.koli.toLocaleString('tr-TR')}</td><td>${it.kg.toLocaleString('tr-TR')}</td></tr>`).join('')}
+          ${o.items.map(it=>`<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50].toLocaleString('tr-TR')}</td><td style="background:var(--g250)">${it[250].toLocaleString('tr-TR')}</td><td style="background:var(--g1000)">${it[1000].toLocaleString('tr-TR')}</td><td>${it.koli.toLocaleString('tr-TR')}</td><td>${it.kg.toLocaleString('tr-TR')}</td></tr>`).join('')}
         </tbody>
         <tfoot>
           <tr style="border-top:2px solid var(--border);font-weight:700;color:var(--gold)">
             <td colspan="4">Toplam</td>
-            <td>${o.items.reduce((a, b) => a + b.koli, 0).toLocaleString('tr-TR')}</td>
-            <td>${o.items.reduce((a, b) => a + b.kg, 0).toLocaleString('tr-TR')}</td>
+            <td>${o.items.reduce((a,b)=>a+b.koli,0).toLocaleString('tr-TR')}</td>
+            <td>${o.items.reduce((a,b)=>a+b.kg,0).toLocaleString('tr-TR')}</td>
           </tr>
         </tfoot>
       </table>
     `);
   }
-  function editOrder(idx) {
-    const o = orders[idx];
+  function editOrder(idx){
+    const o=orders[idx];
     openModal(`
       <h3>Kod: ${o.code} – Sipariş Düzenle (Müşteri: ${o.customer})</h3>
       <label>Gönderim</label>
-      <select id="editShip"><option value="road" ${o.ship==='Karayolu'?'selected':''}>Karayolu</option><option value="sea" ${o.ship==='Denizyolu'?'selected':''}>Denizyolu</option><option value="air" ${o.ship==='Havayolu'?'selected':''}>Havayolu</option></select>
-      <label>Ürün Koli Sayıları (değiştirebilirsiniz)</label>
+      <select id="editShip">
+        <option value="Karayolu" ${o.ship==='Karayolu'?'selected':''}>Karayolu</option>
+        <option value="Denizyolu" ${o.ship==='Denizyolu'?'selected':''}>Denizyolu</option>
+        <option value="Havayolu" ${o.ship==='Havayolu'?'selected':''}>Havayolu</option>
+      </select>
+      <label>Ürün Koli Sayıları</label>
       <div id="editItems"></div>
-    `, `
+    `,`
       <button class="save-btn" onclick="saveEditOrder(${idx})">Kaydet</button>
       <button class="cancel-btn" onclick="closeModal()">İptal</button>
     `);
-    // ürün koli girişleri
-    const div = document.getElementById('editItems');
-    div.innerHTML = o.items.map((it, i) => `
+    const div=document.getElementById('editItems');
+    div.innerHTML=o.items.map((it,i)=>`
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <span style="flex:1">${it.name}</span>
         <input type="number" min="0" step="1" value="${it[50]}" onchange="updateEditItem(${idx},${i},50,this.value)">
@@ -281,167 +299,90 @@
       </div>
     `).join('');
   }
-  function updateEditItem(orderIdx, itemIdx, gram, val) {
-    orders[orderIdx].items[itemIdx][gram] = Number(val);
-    orders[orderIdx].items[itemIdx].koli = orders[orderIdx].items[itemIdx][50] + orders[orderIdx].items[itemIdx][250] + orders[orderIdx].items[itemIdx][1000];
-    orders[orderIdx].items[itemIdx].kg = orders[orderIdx].items[itemIdx].koli * KOLI_KG;
+  function updateEditItem(orderIdx,itemIdx,gram,val){
+    orders[orderIdx].items[itemIdx][gram]=Number(val);
+    orders[orderIdx].items[itemIdx].koli=orders[orderIdx].items[itemIdx][50]+orders[orderIdx].items[itemIdx][250]+orders[orderIdx].items[itemIdx][1000];
+    orders[orderIdx].items[itemIdx].kg=orders[orderIdx].items[itemIdx].koli*KOLI_KG;
   }
-  function saveEditOrder(idx) {
-    orders[idx].ship = document.getElementById('editShip').selectedOptions[0].text;
-    localStorage.setItem('orders', JSON.stringify(orders));
+  function saveEditOrder(idx){
+    orders[idx].ship=document.getElementById('editShip').value;
     closeModal();
     renderOrders();
   }
-  function deleteOrder(idx) {
-    if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    orders.splice(idx, 1);
-    localStorage.setItem('orders', JSON.stringify(orders));
+  function deleteOrder(idx){
+    if(!confirm('Silmek istediğinize emin misiniz?'))return;
+    orders.splice(idx,1);
     renderOrders();
   }
 
-  /* ÜRÜNLER – SIRALAMALI LİSTE + MODAL */
-  function renderProducts() {
-    const list = document.getElementById('productsList');
-    list.innerHTML = '';
-    if (products.length === 0) {
-      list.innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">Ürün yok</div>`;
+  /* ---------- ÜRÜNLER ---------- */
+  function renderProducts(){
+    const list=document.getElementById('productsList');
+    list.innerHTML='';
+    if(products.length===0){
+      list.innerHTML=`<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">Ürün yükleniyor...</div>`;
       return;
     }
-    products.forEach((p, i) => {
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.draggable = true;
-      item.ondragstart = (e) => e.dataTransfer.setData('productIndex', i);
-      item.ondragover = (e) => e.preventDefault();
-      item.ondrop = (e) => reorderProducts(i, parseInt(e.dataTransfer.getData('productIndex')));
-      item.innerHTML = `
-        <img src="${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
+    products.forEach((p,i)=>{
+      const item=document.createElement('div');
+      item.className='item';
+      item.innerHTML=`
+        <img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
         <div class="info">
           <div class="name">${p.tr}</div>
           <div class="sub">${p.ar} | ${p.en}</div>
         </div>
         <div class="actions">
-          <button class="edit-btn" onclick="editProduct(${i})">Düzenle</button>
-          <button class="del-btn" onclick="deleteProduct(${i})">Sil</button>
+          <button class="edit-btn" onclick="viewProduct(${i})">Gör</button>
         </div>
       `;
       list.appendChild(item);
     });
   }
-  function reorderProducts(to, from) {
-    if (to === from) return;
-    const [moved] = products.splice(from, 1);
-    products.splice(to, 0, moved);
-    localStorage.setItem('products', JSON.stringify(products));
-    renderProducts();
-  }
-  function openProductForm(idx = null) {
-    const p = idx !== null ? products[idx] : {tr:'',ar:'',en:'',img:''};
+  function viewProduct(i){
+    const p=products[i];
     openModal(`
-      <h3>${idx !== null ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}</h3>
-      <label>Türkçe İsim</label>
-      <input type="text" id="prodTr" value="${p.tr}">
-      <label>Arapça İsim</label>
-      <input type="text" id="prodAr" value="${p.ar}">
-      <label>İngilizce İsim</label>
-      <input type="text" id="prodEn" value="${p.en}">
-      <label>Resim Yolu (PNG)</label>
-      <input type="text" id="prodImg" placeholder="img/urun1.png" value="${p.img}">
-    `, `
-      <button class="save-btn" onclick="saveProduct(${idx})">Kaydet</button>
-      <button class="cancel-btn" onclick="closeModal()">İptal</button>
+      <h3>${p.tr}</h3>
+      <img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" style="width:100%;max-width:200px;border-radius:8px;margin-bottom:12px">
+      <p><strong>İngilizce:</strong> ${p.en}</p>
+      <p><strong>Arapça:</strong> ${p.ar}</p>
     `);
   }
-  function saveProduct(idx) {
-    const p = {
-      id: idx !== null ? products[idx].id : Date.now(),
-      tr: document.getElementById('prodTr').value.trim(),
-      ar: document.getElementById('prodAr').value.trim(),
-      en: document.getElementById('prodEn').value.trim(),
-      img: document.getElementById('prodImg').value.trim()
-    };
-    if (!p.tr || !p.ar || !p.en) { alert('İsimler zorunlu'); return; }
-    if (idx !== null) products[idx] = p; else products.push(p);
-    localStorage.setItem('products', JSON.stringify(products));
-    closeModal();
-    renderProducts();
-  }
-  function deleteProduct(idx) {
-    if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    products.splice(idx, 1);
-    localStorage.setItem('products', JSON.stringify(products));
-    renderProducts();
-  }
 
-  /* KULLANICILAR – VARSAYILAN ŞİFRE "Adalya" */
-  function renderUsers() {
-    const list = document.getElementById('usersList');
-    list.innerHTML = '';
-    users.forEach((u, i) => {
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.innerHTML = `
+  /* ---------- KULLANICILAR ---------- */
+  function renderUsers(){
+    const list=document.getElementById('usersList');
+    list.innerHTML='';
+    if(users.length===0){
+      list.innerHTML=`<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">Kullanıcı yok</div>`;
+      return;
+    }
+    users.forEach((u,i)=>{
+      const item=document.createElement('div');
+      item.className='item';
+      item.innerHTML=`
         <div class="info">
           <div class="name">${u.user}</div>
-          <div class="sub">${u.user === 'admin' ? 'Yönetici' : 'Kullanıcı'} – Şifre: ${u.pass}</div>
-        </div>
-        <div class="actions">
-          <button class="edit-btn" onclick="resetPassword(${i})">Şifre Sıfırla</button>
-          ${u.user !== 'admin' ? `<button class="del-btn" onclick="deleteUser(${i})">Sil</button>` : ''}
+          <div class="sub">${u.role==='admin'?'Yönetici':'Kullanıcı'}</div>
         </div>
       `;
       list.appendChild(item);
     });
   }
-  function openUserForm() {
-    openModal(`
-      <h3>Yeni Kullanıcı Ekle</h3>
-      <label>Kullanıcı Adı</label>
-      <input type="text" id="newUser" placeholder="örn. ahmet">
-    `, `
-      <button class="save-btn" onclick="saveUser()">Kaydet (şifre: Adalya)</button>
-      <button class="cancel-btn" onclick="closeModal()">İptal</button>
-    `);
-  }
-  function saveUser() {
-    const u = document.getElementById('newUser').value.trim();
-    if (!u) { alert('Kullanıcı adı zorunlu'); return; }
-    if (users.find(x => x.user === u)) { alert('Kullanıcı var'); return; }
-    users.push({user: u, pass: 'Adalya'});
-    localStorage.setItem('users', JSON.stringify(users));
-    closeModal();
-    renderUsers();
-  }
-  function resetPassword(idx) {
-    const newPass = 'Adalya';
-    if (!confirm(`Yeni şifre: ${newPass}\nDevam etmek istiyor musun?`)) return;
-    users[idx].pass = newPass;
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('Şifre sıfırlandı');
-    renderUsers();
-  }
-  function deleteUser(idx) {
-    if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    users.splice(idx, 1);
-    localStorage.setItem('users', JSON.stringify(users));
-    renderUsers();
-  }
 
-  /* MODAL */
-  function openModal(body, footer = '') {
-    document.getElementById('modalBody').innerHTML = body;
-    document.getElementById('modalFooter').innerHTML = footer;
+  /* ---------- MODAL ---------- */
+  function openModal(body,footer=''){
+    document.getElementById('modalBody').innerHTML=body;
+    document.getElementById('modalFooter').innerHTML=footer;
     document.getElementById('modal').classList.add('show');
   }
-  function closeModal() {
+  function closeModal(){
     document.getElementById('modal').classList.remove('show');
   }
 
-  /* BAŞLAT */
-  window.onload = () => {
-    renderOrders();
-    renderProducts();
-    renderUsers();
+  /* ---------- BAŞLAT ---------- */
+  window.onload=()=>{
+    loadAll();
   };
 </script>
 
