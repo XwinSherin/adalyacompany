@@ -8,6 +8,9 @@
   <!-- SheetJS .xlsx indirme -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+  <!-- Favicon 404 önlemi – MAD-4 -->
+  <link rel="icon" href="data:,">
+
   <style>
     :root{
       --gold:#d4af37;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;
@@ -44,7 +47,7 @@
     .gonderim-btn.active{background:var(--gold);color:#fff;transform:scale(1.05)}
     .gonderim-btn span{font-size:1.4rem;margin-right:6px}
 
-    /* ARAMA */
+    /* ARAMA – MAD-3 sıfırlanma düzeltildi */
     .search-box{position:relative;max-width:600px;margin:0 auto 24px}
     .search-input{width:100%;padding:14px 48px 14px 16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1.1rem;transition:border-color .2s}
     .search-input:focus{border-color:var(--gold);outline:none}
@@ -74,6 +77,7 @@
     .product-table tbody tr.gram-1000{background:var(--g1000)}
     .product-table tfoot td{background:var(--total);font-weight:700;color:var(--text)}
 
+    /* KOLİ GİRİŞ – MAD-1 / MAD-2 */
     .koli-input input{width:100%;padding:6px 4px;border:1.4px solid var(--border);border-radius:6px;font-family:'Courier New', monospace;font-size:0.85rem;font-weight:600;text-align:center;direction:ltr;transition:border-color .2s}
     .koli-input input:focus{border-color:var(--gold);outline:none}
 
@@ -82,41 +86,6 @@
     .btn-modern{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s}
     .btn-modern:active{transform:scale(.96)}
     .btn-primary{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(212,175,55,.3)}
-    .btn-secondary{background:#eee;color:var(--text)}
-
-    /* ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI */
-    .bottom-total{
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(6px);
-      border-top: 2px solid var(--gold);
-      padding: 12px 16px;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 1rem;
-      font-weight: 600
-            box-shadow: 0 -4px 20px rgba(0,0,0,.1);
-    }
-    .bottom-total .label{color:var(--gold);}
-    .bottom-total .val{font-family:'Courier New', monospace;}
-    .gram-totals{font-size:.8rem;display:flex;gap:12px}
-
-    /* MODAL – SİPARİŞ ÖZETİ */
-    .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
-    .modal.show{display:flex}
-    .modal-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
-    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
-    .modal-header h2{font-size:1.2rem;font-weight:700}
-    .close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text)}
-    .modal-body{padding:16px;font-size:.85rem;line-height:1.5;display:flex;flex-direction:column;gap:10px}
-    .modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
-    .modal-footer button{flex:1;padding:10px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer}
-    .save-btn{background:var(--gold);color:#fff}
     .btn-secondary{background:#eee;color:var(--text)}
     .excel-btn{background:#217346;color:#fff}
 
@@ -370,9 +339,9 @@
         <table class="product-table">
           <thead><tr><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
           <tbody>
-            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,50,${i})"></td><td class="kg-50 kg-display"></td></tr>
-            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,250,${i})"></td><td class="kg-250 kg-display"></td></tr>
-            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="" oninput="updateKg(this,1000,${i})"></td><td class="kg-1000 kg-display"></td></tr>
+            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="text" maxlength="5" placeholder="" oninput="formatKoli(this,50,${i})"></td><td class="kg-50 kg-display"></td></tr>
+            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="text" maxlength="5" placeholder="" oninput="formatKoli(this,250,${i})"></td><td class="kg-250 kg-display"></td></tr>
+            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="text" maxlength="5" placeholder="" oninput="formatKoli(this,1000,${i})"></td><td class="kg-1000 kg-display"></td></tr>
           </tbody>
           <tfoot><tr><td>Toplam</td><td class="total-koli"></td><td class="total-kg"></td></tr></tfoot>
         </table>
@@ -380,6 +349,15 @@
       list.appendChild(card);
       setTimeout(()=>card.classList.add('visible'),i*50);
     });
+  }
+
+  /* ===== KOLİ GİRİŞ – SADECE SAYI, MAX 5, BİNLİK AYIRAC – MAD-1 / MAD-2 ===== */
+  function formatKoli(inp,gr,idx){
+    let v=inp.value.replace(/[^0-9]/g,'').slice(0,5);
+    if(v===''){v='0';}
+    const num=parseInt(v,10);
+    inp.value=fmt(num);
+    updateKg(inp,gr,idx);
   }
 
   function openOrderModal(){
