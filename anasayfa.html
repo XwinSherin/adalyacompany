@@ -3,478 +3,215 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title data-tr="Sipariş Oluştur" data-ar="إنشاء طلب" data-en="Create Order">Sipariş Oluştur</title>
+  <title>Adalya Company – Anasayfa</title>
+
   <style>
     :root{
-      --gold:#d4af37;--gold-dark:#b8941f;--bg:#f5f7fa;--surface:#fff;
-      --text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;
-      --g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;
-      --radius:16px;--shadow:0 6px 20px rgba(0,0,0,.08);
+      --gold:#d4af37;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;
+      --g50:#e8f5e9;--g250:#ffebee;--g1000:#e3f2fd;--total:#fff9c4;
+      --radius:16px;--shadow:0 8px 30px rgba(0,0,0,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-    body{background:var(--bg);color:var(--text);padding-bottom:100px}
+    body{background:var(--bg);color:var(--text)}
+
     /* ÜST BAR */
-    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
-    .logo-name{display:flex;align-items:center;gap:8px}
-    .logo-name img{height:40px;border-radius:8px}
-    .logo-name .company{font-size:1.05rem;font-weight:700}
-    .lang-top{display:flex;gap:6px}
-    .lang-top button{min-width:40px;height:28px;border:none;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;background:#eee;color:var(--text);transition:background .2s}
-    .lang-top button.active{background:var(--gold);color:#fff}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
+    .logo-name{display:flex;align-items:center;gap:12px}
+    .logo-name img{height:48px;border-radius:12px}
+    .logo-name .company{font-size:1.2rem;font-weight:700;letter-spacing:.5px}
+    .logout-btn{background:var(--error);color:#fff;border:none;border-radius:var(--radius);padding:10px 16px;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+    .logout-btn:hover{background:#c0392b}
+    .user-info{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600}
 
-    /* CUSTOMER + ORDER CODE + SHIP */
-    .section{padding:12px 16px;max-width:800px;margin:auto}
-    .customer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .customer-row input{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.95rem}
-    .ship-group{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-    .ship-card{flex:1;min-width:100px;position:relative;border:2px solid var(--border);border-radius:var(--radius);padding:10px;text-align:center;cursor:pointer;transition:border-color .3s,background .3s}
-    .ship-card.selected{border-color:var(--gold);background:var(--gold);color:#fff}
-    .ship-card input{position:absolute;inset:0;opacity:0;cursor:pointer}
-    .ship-card .label{font-size:.8rem;font-weight:600}
+    /* DİL BUTONLARI */
+    .lang-float{position:fixed;bottom:16px;right:16px;z-index:999;display:flex;gap:6px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:6px;border-radius:30px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+    .lang-float button{min-width:64px;height:40px;border:none;border-radius:20px;font-size:.9rem;font-weight:700;cursor:pointer;background:#fff;color:var(--text);transition:transform .2s}
+    .lang-float button:active{transform:scale(.92)}
+    .lang-float button.active{background:var(--gold);color:#fff}
 
-    /* ÜRÜN KARTLARI */
-    .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:12px}
-    .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
-    .card img{width:100%;height:110px;object-fit:cover}
-    .card-header{padding:8px;font-size:.95rem;font-weight:600;text-align:center}
-    .card table{width:100%;font-size:.8rem;border-collapse:collapse;table-layout:fixed}
-    .card th,.card td{width:33.33%;padding:6px 2px;text-align:center;border:1px solid var(--border)}
-    .card th{font-weight:700;background:var(--bg)}
-    .card input{width:100%;max-width:70px;padding:4px;font-size:.8rem;text-align:center;border:1px solid var(--border);border-radius:4px;direction:ltr;unicode-bidi:plaintext}
-    .card .kg{font-weight:600}
-    .card .total-row{font-weight:700;background:var(--bg);color:var(--gold)}
-    .card .tr-50{background:var(--g50)}
-    .card .tr-250{background:var(--g250)}
-    .card .tr-1000{background:var(--g1000)}
+    /* ÜRÜN KARTI */
+    .products-container{display:grid;gap:18px;max-width:1600px;margin:0 auto;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr))}
+    .product-card{border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow);transition:transform .3s ease, box-shadow .3s ease;will-change:transform;opacity:0;transform:translateY(20px)}
+    .product-card.visible{opacity:1;transform:translateY(0)}
+    .product-card:hover{transform:translateY(-5px);box-shadow:0 12px 35px rgba(0,0,0,.15)}
+    .product-img{width:100%;height:120px;object-fit:cover;border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}
+    .product-name{background:linear-gradient(135deg, #4facfe, #00f2fe);color:#fff;padding:10px 8px;text-align:center;font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* GRAMAJ TOPLAMLARI */
-    .gram-totals{max-width:800px;margin:12px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
-    .gram-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;text-align:center;font-size:.9rem;font-weight:600}
-    .gram-card.g-50{background:var(--g50)}.gram-card.g-250{background:var(--g250)}.gram-card.g-1000{background:var(--g1000)}
-    .gram-card .val{color:var(--gold);font-size:1.1rem}
+    .product-table{width:100%;border-collapse:collapse;font-size:0.9rem;table-layout:fixed}
+    .product-table th,.product-table td{width:33.33%;padding:8px 4px;text-align:center;border:1px solid var(--border);height:36px}
+    .product-table th{background:#f8f9fa;font-weight:700;color:var(--text)}
+    .product-table tbody tr.gram-50{background:var(--g50)}
+    .product-table tbody tr.gram-250{background:var(--g250)}
+    .product-table tbody tr.gram-1000{background:var(--g1000)}
+    .product-table tfoot td{background:var(--total);font-weight:700;color:var(--text)}
 
-    /* MODAL BUTON */
-    .modal-btn{width:90%;max-width:300px;margin:12px auto;display:block;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:700;cursor:pointer}
+    .koli-input input{width:100%;padding:6px 4px;border:1.4px solid var(--border);border-radius:6px;font-family:'Courier New', monospace;font-size:0.9rem;font-weight:600;text-align:center;direction:ltr;transition:border-color .2s}
+    .koli-input input:focus{border-color:var(--gold);outline:none}
 
-    /* MODAL */
-    .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
-    .modal.show{display:flex}
-    .modal-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
-    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
-    .modal-header h2{font-size:1.1rem}
-    .close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text)}
-    .modal-body{padding:16px;font-size:.9rem;line-height:1.5}
-    .modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
-    .modal-footer button{flex:1;padding:10px;border:none;border-radius:var(--radius);font-size:.9rem;font-weight:700;cursor:pointer}
-    .save-btn{background:var(--gold);color:#fff}
-    .wp-btn{background:#25D366;color:#fff}
-    .excel-btn{background:#1e7e34;color:#fff}
-
-    /* SİPARİŞLERİM MODAL */
-    .orders-modal{display:none;position:fixed;inset:0;z-index:2001;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
-    .orders-modal.show{display:flex}
-    .orders-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
-    .orders-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-    .orders-list{padding:12px;display:flex;flex-direction:column;gap:8px}
-    .order-item{background:var(--bg);border-radius:var(--radius);padding:10px;display:flex;justify-content:space-between;align-items:center}
-    .order-item .info{font-size:.85rem}
-    .order-item .actions{display:flex;gap:6px}
-    .order-item .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
-    .edit-btn{background:var(--gold);color:#fff}
-    .del-btn{background:var(--error);color:#fff}
-
-    /* EXCEL CDN */
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    document.head.appendChild(script);
-</style>
+    .gonderim-secimi{margin-top:24px;text-align:center}
+    .gonderim-select{padding:10px 14px;border-radius:var(--radius);border:1.5px solid var(--border);font-size:1rem;background:var(--surface);cursor:pointer}
+  </style>
 </head>
 <body>
 
-<!-- ÜST BAR -->
 <header class="top-bar">
-  <div class="logo-name">
-    <img src="img/adalyalogo.jpg" alt="Logo">
-    <span class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</span>
-  </div>
-  <div class="lang-top">
-    <button onclick="setLang('tr')" title="Türkçe" class="active">TR</button>
-    <button onclick="setLang('ar')" title="العربية">AR</button>
-    <button onclick="setLang('en')" title="English">EN</button>
-  </div>
+  <div class="logo-name"><img src="img/adalyalogo.jpg" alt="Logo"><span class="company" data-tr="Adalya Company" data-ar="شركة أداليا" data-en="Adalya Company">Adalya Company</span></div>
+  <div class="user-info"><span id="userName"></span><button class="logout-btn" onclick="cikis()">Çıkış</button></div>
 </header>
 
-<!-- CUSTOMER + ORDER CODE + SHIP -->
-<section class="section">
-  <div class="customer-row">
-    <div>
-      <label data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri</label>
-      <input type="text" id="customer" placeholder="Müşteri" data-tr-placeholder="Müşteri" data-ar-placeholder="العميل" data-en-placeholder="Customer">
-    </div>
-    <div>
-      <label data-tr="Sipariş Kodu" data-ar="رمز الطلب" data-en="Order Code">Sipariş Kodu</label>
-      <input type="text" id="orderCode" placeholder="Otomatik" data-tr-placeholder="Otomatik" data-ar-placeholder="تلقائي" data-en-placeholder="Auto">
-    </div>
-  </div>
-  <div class="ship-group">
-    <div class="ship-card selected">
-      <input type="radio" name="ship" value="road" checked>
-      <div class="label" data-tr="Karayolu" data-ar="الطريق البري" data-en="Road">Karayolu</div>
-    </div>
-    <div class="ship-card">
-      <input type="radio" name="ship" value="sea">
-      <div class="label" data-tr="Denizyolu" data-ar="البحرية" data-en="Sea">Denizyolu</div>
-    </div>
-    <div class="ship-card">
-      <input type="radio" name="ship" value="air">
-      <div class="label" data-tr="Havayolu" data-ar="الجوية" data-en="Air">Havayolu</div>
-    </div>
+<!-- ==========  ÜRÜN KARTI  ========== -->
+<section id="products" class="section active">
+  <h3 data-tr="Ürünler" data-ar="المنتجات" data-en="Products">Ürünler</h3>
+  <input id="prodSearch" class="filter-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
+  <div class="products-container" id="productsList"></div>
+  <div class="gonderim-secimi">
+    <select id="gonderimSelect">
+      <option value="Karayolu" selected data-tr="Karayolu" data-ar="الطريق البري" data-en="Road">🚛 Karayolu</option>
+      <option value="Denizyolu" data-tr="Denizyolu" data-ar="الطريق البحري" data-en="Sea">🚢 Denizyolu</option>
+      <option value="Havayolu" data-tr="Havayolu" data-ar="الطريق الجوي" data-en="Air">✈️ Havayolu</option>
+    </select>
   </div>
 </section>
 
-<!-- ÜRÜN KARTLARI -->
-<main class="products" id="products"></main>
-
-<!-- GRAMAJ TOPLAMLARI -->
-<section class="gram-totals" id="gramTotals"></section>
-
-<!-- BUTONLAR -->
-<div style="display:flex;gap:12px;justify-content:center;padding:12px">
-  <button class="modal-btn" onclick="showSummary()" data-tr="Sipariş Oluştur" data-ar="إنشاء الطلب" data-en="Create Order">Sipariş Oluştur</button>
-  <button class="modal-btn" onclick="kayitliSiparisler()" data-tr="Siparişlerim" data-ar="طلباتي" data-en="My Orders">Siparişlerim</button>
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="summaryModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 data-tr="Sipariş Özeti" data-ar="ملخص الطلب" data-en="Order Summary">Sipariş Özeti</h2>
-      <button class="close-modal" onclick="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body" id="summaryBody"></div>
-    <div class="modal-footer">
-      <button class="save-btn" onclick="saveOrder()" data-tr="Kaydet" data-ar="حفظ" data-en="Save">Kaydet</button>
-      <button class="wp-btn" onclick="shareWhatsApp()" data-tr="WhatsApp" data-ar="واتساب" data-en="WhatsApp">WhatsApp</button>
-      <button class="excel-btn" onclick="downloadExcel()" data-tr="Excel" data-ar="إكسل" data-en="Excel">Excel</button>
-    </div>
-  </div>
-</div>
-
-<!-- SİPARİŞLERİM MODAL -->
-<div class="orders-modal" id="ordersModal">
-  <div class="orders-content">
-    <div class="orders-header">
-      <h3 data-tr="Siparişlerim" data-ar="طلباتي" data-en="My Orders">Siparişlerim</h3>
-      <button class="close-modal" onclick="closeOrdersModal()">&times;</button>
-    </div>
-    <div class="orders-list" id="ordersList"></div>
-  </div>
+<!-- ==========  DİL BUTONLARI  ========== -->
+<div class="lang-float">
+  <button class="active" onclick="setLang('tr')" title="Türkçe">Türkçe</button>
+  <button onclick="setLang('ar')" title="العربية">العربية</button>
+  <button onclick="setLang('en')" title="English">English</button>
 </div>
 
 <script>
-  const KOLI_KG = 6;
-  let currentLang = localStorage.getItem('lang') || 'tr';
-  let currentOrder = {};
-  let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-  let orderCounter = parseInt(localStorage.getItem('orderCounter') || '1000');
-
-  /* DİL */
-  function setLang(lang) {
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-    document.documentElement.lang = lang;
-    document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
-    // başlıklar
-    document.querySelectorAll('[data-tr]').forEach(el => el.textContent = el.dataset[lang] || el.dataset.tr);
-    // placeholder
-    document.querySelectorAll('[data-tr-placeholder]').forEach(el => el.placeholder = el.dataset[lang + 'Placeholder'] || el.dataset.trPlaceholder);
-    // üst butonlar
-    document.querySelectorAll('.lang-top button').forEach(b => b.classList.toggle('active', b.title.includes(lang === 'ar' ? 'العربية' : lang === 'en' ? 'English' : 'Türkçe')));
-    // veri koru – sadece başlıkları güncelle
-    updateGramTotals();
-    shipCards();
+  /* ----------  TOKEN (Yöntem A)  ---------- */
+  let TOKEN = sessionStorage.getItem('ghToken');
+  if (!TOKEN) {
+    TOKEN = prompt('GitHub Personal Access Token (repo scope):');
+    if (TOKEN) sessionStorage.setItem('ghToken', TOKEN);
   }
+  const REPO   = 'XwinSherin/adalyacompany';
+  const BRANCH = 'main';
 
-  /* OTO SİPARİŞ KODU */
-  function generateOrderCode() {
-    const user = localStorage.getItem('currentUser') || '';
-    const code = user.toUpperCase() + '-' + (++orderCounter).toString().padStart(4, '0');
-    localStorage.setItem('orderCounter', orderCounter);
-    document.getElementById('orderCode').value = code;
-    document.getElementById('orderCode').placeholder = code;
-  }
-
-  /* ÜRÜN VERİSİ */
-  const products = [
-    {id:1, tr:'Çikolatalı Gofret', ar:'كوفريت بالشوكولاتة', en:'Chocolate Wafer', img:'https://via.placeholder.com/220x110?text=Gofret'},
-    {id:2, tr:'Süt 1 L',           ar:'حليب ١ لتر',         en:'Milk 1 L',         img:'https://via.placeholder.com/220x110?text=Süt'},
-    {id:3, tr:'Yumurta 6\'lı',     ar:'بيض ٦ قطع',          en:'Eggs 6 pcs',       img:'https://via.placeholder.com/220x110?text=Yumurta'}
-  ];
-
-  /* SAYFA AÇILIRKEN */
-  window.onload = () => {
-    setLang(currentLang);
-    document.getElementById('customerName').textContent = localStorage.getItem('currentUser') || '---';
-    generateOrderCode();
-    renderProducts();
-    updateGramTotals();
-    shipCards();
-  };
-
-  /* GÖNDERİM SEÇİMİ */
-  function shipCards() {
-    document.querySelectorAll('.ship-card').forEach(card => {
-      card.addEventListener('click', () => {
-        card.querySelector('input').checked = true;
-        document.querySelectorAll('.ship-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
+  /* ----------  GİTHUB'A YAZ  ---------- */
+  async function writeGitHubFile(path, content, message){
+    if (!TOKEN) { alert('Token yok'); return; }
+    try {
+      const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
+        headers: { 'Authorization': `token ${TOKEN}` }
       });
-      if (card.querySelector('input').checked) card.classList.add('selected');
-    });
+      let sha = '';
+      if (getRes.status === 200) {
+        const fileInfo = await getRes.json();
+        sha = fileInfo.sha;
+      } else if (getRes.status === 404) {
+        // dosya yok → oluştur
+      } else {
+        throw new Error('SHA alınamadı: ' + getRes.statusText);
+      }
+      const encoded = btoa(unescape(encodeURIComponent(content)));
+      const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        method : 'PUT',
+        headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type': 'application/json' },
+        body   : JSON.stringify({ message, content: encoded, sha })
+      });
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || putRes.statusText);
+      }
+      console.log(`${path} güncellendi`);
+      alert(`${path} başarıyla GitHub’a yazıldı!`);
+    } catch (err) {
+      console.error(err);
+      alert('Yazma hatası: ' + err.message);
+    }
   }
 
-  /* ÜRÜN KARTLARI */
-  function renderProducts() {
-    const container = document.getElementById('products');
-    container.innerHTML = '';
-    products.forEach(p => {
+  /* ----------  DEĞİŞKENLER  ---------- */
+  let products = [];
+  let orders   = [];
+  const KOLI_KG = 6;
+
+  /* ----------  GİRİŞ KONTROLÜ  ---------- */
+  (()=>{
+    if(sessionStorage.getItem('role')!=='user'){ location.href='index.html'; }
+    document.getElementById('userName').textContent=sessionStorage.getItem('currentUser')||'Bayi';
+  })();
+
+  /* ----------  ÇIKIŞ  ---------- */
+  function cikis(){
+    sessionStorage.clear();
+    location.href='index.html';
+  }
+
+  /* ----------  DİL  ---------- */
+  function setLang(lang){
+    localStorage.setItem('lang',lang);
+    document.documentElement.lang=lang;
+    document.documentElement.dir=(lang==='ar'?'rtl':'ltr');
+    document.querySelectorAll('[data-tr]').forEach(el=>el.textContent=el.dataset[lang]||el.dataset.tr);
+    document.querySelectorAll('.gonderim-select option').forEach(opt=>opt.textContent=opt.dataset[lang]||opt.dataset.tr);
+    document.querySelectorAll('.lang-float button').forEach(b=>b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية':lang==='en'?'English':'Türkçe')));
+  }
+
+  /* ----------  ÜRÜN ÇEK  ---------- */
+  async function loadProducts(){
+    const res = await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json');
+    products = await res.json();
+    products = products.filter(p => p.active !== false);
+    renderProducts();
+  }
+
+  /* ----------  ÜRÜN GÖSTER  ---------- */
+  function renderProducts(){
+    const list = document.getElementById('productsList');
+    list.innerHTML = '';
+    const search = document.getElementById('prodSearch').value.toLowerCase();
+    const filtered = products.filter(p =>
+      p.tr.toLowerCase().includes(search) ||
+      p.ar.toLowerCase().includes(search) ||
+      p.en.toLowerCase().includes(search)
+    );
+    filtered.forEach((p, i) => {
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'product-card';
       card.innerHTML = `
-        <img src="${p.img}" alt="${p[currentLang]||p.tr}">
-        <div class="card-header" data-tr="${p.tr}" data-ar="${p.ar}" data-en="${p.en}">${p.tr}</div>
-        <table>
-          <thead><tr><th data-tr="Gram" data-ar="غرام" data-en="Gram">Gram</th><th data-tr="Koli" data-ar="كولا" data-en="Carton">Koli</th><th data-tr="KG" data-ar="كجم" data-en="KG">KG</th></tr></thead>
+        <img class="product-img" src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/300x120?text=PNG'">
+        <div class="product-name" data-tr="${p.tr}" data-ar="${p.ar}" data-en="${p.en}">${p.tr}</div>
+        <table class="product-table">
+          <thead><tr><th>Gramaj</th><th>Koli</th><th>Kg</th></tr></thead>
           <tbody>
-            <tr class="tr-50"><td data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="50" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="50"> </td></tr>
-            <tr class="tr-250"><td data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="250" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="250"> </td></tr>
-            <tr class="tr-1000"><td data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</td><td><input type="number" min="0" step="1" maxlength="6" data-g="1000" data-id="${p.id}" placeholder=" "></td><td class="kg" data-g="1000"> </td></tr>
+            <tr class="gram-50"><td>50G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 50, ${i})"></td><td class="kg-50">0</td></tr>
+            <tr class="gram-250"><td>250G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 250, ${i})"></td><td class="kg-250">0</td></tr>
+            <tr class="gram-1000"><td>1000G</td><td class="koli-input"><input type="number" min="0" max="99999" placeholder="0" oninput="updateKg(this, 1000, ${i})"></td><td class="kg-1000">0</td></tr>
           </tbody>
-          <tfoot><tr class="total-row"><td data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</td><td data-total-koli="0"> </td><td data-total-kg="0"> </td></tr></tfoot>
+          <tfoot><tr><td>Toplam</td><td class="total-koli">0</td><td class="total-kg">0</td></tr></tfoot>
         </table>
       `;
-      container.appendChild(card);
-    });
-    container.addEventListener('input', e => {
-      if (e.target.dataset.g) {
-        const raw = e.target.value.replace(/[^\d]/g, '');
-        if (raw.length > 5) { e.target.value = e.target.value.slice(0, 5); return; }
-        const koli = Number(raw) || 0;
-        const kg = koli * KOLI_KG;
-        const kgEl = e.target.closest('tr').querySelector('.kg');
-        kgEl.textContent = kg === 0 ? ' ' : Number(kg).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR');
-        updateCardTotal(e.target.closest('table'));
-        updateGramTotals();
-      }
+      list.appendChild(card);
+      setTimeout(() => card.classList.add('visible'), i * 50);
     });
   }
 
-  /* KART TOPLAMI */
-  function updateCardTotal(table) {
-    let koli = 0;
-    table.querySelectorAll('input[data-g]').forEach(inp => koli += Number(inp.value.replace(/[^\d]/g, '')) || 0);
-    const kg = koli * KOLI_KG;
-    table.querySelector('[data-total-koli]').textContent = koli === 0 ? ' ' : koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR');
-    table.querySelector('[data-total-kg]').textContent = kg === 0 ? ' ' : kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR');
+  /* ----------  ANLIK KG + TOPLAM  ---------- */
+  function updateKg(input, gram, idx) {
+    const val  = Math.max(0, parseInt(input.value) || 0);
+    const kg   = val * KOLI_KG;
+    const card = input.closest('.product-card');
+    card.querySelector(`.kg-${gram}`).textContent = kg.toLocaleString('tr-TR');
+
+    const k50   = parseInt(card.querySelector('.kg-50').textContent.replace(/\./g,''))  || 0;
+    const k250  = parseInt(card.querySelector('.kg-250').textContent.replace(/\./g,'')) || 0;
+    const k1000 = parseInt(card.querySelector('.kg-1000').textContent.replace(/\./g,''))|| 0;
+    const totKg   = k50 + k250 + k1000;
+    const totKoli = totKg / KOLI_KG;
+
+    card.querySelector('.total-koli').textContent = totKoli.toLocaleString('tr-TR');
+    card.querySelector('.total-kg').textContent   = totKg.toLocaleString('tr-TR');
   }
 
-  /* GRAMAJ TOPLAMLARI */
-  function updateGramTotals() {
-    const totals = { 50: 0, 250: 0, 1000: 0 };
-    document.querySelectorAll('input[data-g]').forEach(inp => {
-      totals[inp.dataset.g] += Number(inp.value.replace(/[^\d]/g, '')) || 0;
-    });
-    const container = document.getElementById('gramTotals');
-    container.innerHTML = `
-      <div class="gram-card g-50"><div data-tr="50G" data-ar="٥٠غ" data-en="50G">50 G</div><div class="val">${totals[50] === 0 ? ' ' : totals[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[50] * KOLI_KG) === 0 ? ' ' : (totals[50] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
-      <div class="gram-card g-250"><div data-tr="250G" data-ar="٢٥٠غ" data-en="250G">250 G</div><div class="val">${totals[250] === 0 ? ' ' : totals[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[250] * KOLI_KG) === 0 ? ' ' : (totals[250] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
-      <div class="gram-card g-1000"><div data-tr="1000G" data-ar="١٠٠٠غ" data-en="1000G">1000 G</div><div class="val">${totals[1000] === 0 ? ' ' : totals[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli</div><div>${(totals[1000] * KOLI_KG) === 0 ? ' ' : (totals[1000] * KOLI_KG).toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</div></div>
-    `;
-  }
-
-  /* MODAL BUTON */
-  function showSummary() {
-    const customer = document.getElementById('customer').value.trim();
-    if (!customer) { alert(currentLang === 'ar' ? 'يرجى إدخال اسم العميل' : currentLang === 'en' ? 'Please enter customer name' : 'Lütfen müşteri adı girin'); return; }
-    const code = document.getElementById('orderCode').value.trim();
-    const ship = document.querySelector('input[name="ship"]:checked').value;
-    const shipText = { road: currentLang === 'ar' ? 'الطريق البري' : currentLang === 'en' ? 'Road' : 'Karayolu', sea: currentLang === 'ar' ? 'البحرية' : currentLang === 'en' ? 'Sea' : 'Denizyolu', air: currentLang === 'ar' ? 'الجوية' : currentLang === 'en' ? 'Air' : 'Havayolu' }[ship];
-    const totals = { 50: 0, 250: 0, 1000: 0, koli: 0, kg: 0 };
-    const items = [];
-    document.querySelectorAll('.card').forEach(card => {
-      const name = card.querySelector('.card-header').dataset[currentLang] || card.querySelector('.card-header').dataset.tr;
-      const vals = { 50: 0, 250: 0, 1000: 0 };
-      let cardKoli = 0;
-      card.querySelectorAll('input[data-g]').forEach(inp => {
-        const g = inp.dataset.g;
-        const koli = Number(inp.value.replace(/[^\d]/g, '')) || 0;
-        vals[g] = koli;
-        cardKoli += koli;
-        totals[g] += koli;
-      });
-      totals.koli += cardKoli;
-      totals.kg += cardKoli * KOLI_KG;
-      if (cardKoli > 0) items.push({ name, ...vals, koli: cardKoli, kg: cardKoli * KOLI_KG });
-    });
-    currentOrder = { customer, code, ship: shipText, items, totals, date: new Date().toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR') };
-
-    const body = document.getElementById('summaryBody');
-    // **RENKLİ ve KENAR ÇİZGİLİ** özet tablosu
-    body.innerHTML = `
-      <p><strong data-tr="Müşteri" data-ar="العميل" data-en="Customer">Müşteri:</strong> ${customer}</p>
-      <p><strong data-tr="Sipariş Kodu" data-ar="رمز الطلب" data-en="Order Code">Sipariş Kodu:</strong> ${code}</p>
-      <p><strong data-tr="Gönderim" data-ar="الشحن" data-en="Shipping">Gönderim:</strong> ${shipText}</p>
-      <p><strong data-tr="Tarih" data-ar="التاريخ" data-en="Date">Tarih:</strong> ${currentOrder.date}</p>
-      <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
-      <table style="width:100%;font-size:.85rem;border-collapse:collapse;border:1px solid var(--border)">
-        <thead><tr><th data-tr="Ürün" data-ar="المنتج" data-en="Product">Ürün</th><th style="background:var(--g50)">50 G</th><th style="background:var(--g250)">250 G</th><th style="background:var(--g1000)">1000 G</th><th data-tr="Toplam" data-ar="الإجمالي" data-en="Total">Toplam</th></tr></thead>
-        <tbody>
-          ${items.map(it => `<tr><td>${it.name}</td><td style="background:var(--g50)">${it[50] === 0 ? ' ' : it[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g250)">${it[250] === 0 ? ' ' : it[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td style="background:var(--g1000)">${it[1000] === 0 ? ' ' : it[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td><td>${it.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${it.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td></tr>`).join('')}
-        </tbody>
-        <tfoot>
-          <tr style="border-top:2px solid var(--border);font-weight:700;color:var(--gold)">
-            <td data-tr="Genel Toplam" data-ar="الإجمالي الكلي" data-en="Grand Total">Genel Toplam</td>
-            <td>${totals[50].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
-            <td>${totals[250].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
-            <td>${totals[1000].toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')}</td>
-            <td>${totals.koli.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} Koli / ${totals.kg.toLocaleString(currentLang === 'ar' ? 'ar-IQ' : 'tr-TR')} KG</td>
-          </tr>
-        </tfoot>
-      </table>
-    `;
-    document.getElementById('summaryModal').classList.add('show');
-  }
-  function closeModal() { document.getElementById('summaryModal').classList.remove('show'); }
-
-  /* KAYDET */
-  function saveOrder() {
-    orders.push(currentOrder);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    closeModal();
-    alert(currentLang === 'ar' ? '✅ تم الحفظ' : currentLang === 'en' ? '✅ Saved' : '✅ Kaydedildi');
-    yeniSiparis();
-  }
-
-  /* WHATSAPP */
-  function shareWhatsApp() {
-    if (!currentOrder) return;
-    let txt = `*SİPARİŞ ÖZETİ*\n\n*Müşteri:* ${currentOrder.customer}\n*Kod:* ${currentOrder.code}\n*Gönderim:* ${currentOrder.ship}\n*Tarih:* ${currentOrder.date}\n\n`;
-    currentOrder.items.forEach(it => {
-      txt += `• ${it.name}\n`;
-      txt += `  50 G: ${it[50] || 0} Koli\n`;
-      txt += `  250 G: ${it[250] || 0} Koli\n`;
-      txt += `  1000 G: ${it[1000] || 0} Koli\n`;
-      txt += `  Toplam: ${it.koli} Koli / ${it.kg} KG\n\n`;
-    });
-    txt += `*Genel Toplam:* ${currentOrder.totals.koli} Koli / ${currentOrder.totals.kg} KG`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
-  }
-
-  /* EXCEL */
-  function downloadExcel() {
-    if (!currentOrder) return;
-    const wb = XLSX.utils.book_new();
-    const title = [
-      ["SİPARİŞ ÖZETİ"],
-      [],
-      ["Müşteri", currentOrder.customer],
-      ["Kod", currentOrder.code],
-      ["Gönderim", currentOrder.ship],
-      ["Tarih", currentOrder.date],
-      []
-    ];
-    const headers = [["Ürün", "50 G", "250 G", "1000 G", "Toplam Koli", "Toplam KG"]];
-    const data = currentOrder.items.map(it => [
-      it.name,
-      it[50] || 0,
-      it[250] || 0,
-      it[1000] || 0,
-      it.koli,
-      it.kg
-    ]);
-    const totals = [["GENEL TOPLAM", currentOrder.totals[50], currentOrder.totals[250], currentOrder.totals[1000], currentOrder.totals.koli, currentOrder.totals.kg]];
-    const allData = [...title, ...headers, ...data, ...totals];
-    const ws = XLSX.utils.aoa_to_sheet(allData);
-    // kenar çizgileri
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    for (let R = range.s.r; R <= range.e.r; ++R) {
-      for (let C = range.s.c; C <= range.e.c; ++C) {
-        const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-        if (!cell) continue;
-        if (!cell.s) cell.s = {};
-        cell.s.border = {
-          top: { style: "thin", color: { rgb: "000000" } },
-          left: { style: "thin", color: { rgb: "000000" } },
-          bottom: { style: "thin", color: { rgb: "000000" } },
-          right: { style: "thin", color: { rgb: "000000" } }
-        };
-        if (R === 6) { // başlık
-          cell.s.fill = { patternType: "solid", fgColor: { rgb: "D4AF37" } };
-          cell.s.font = { color: { rgb: "FFFFFF" }, bold: true };
-        }
-        if (R === range.e.r) { // genel toplam
-          cell.s.fill = { patternType: "solid", fgColor: { rgb: "27AE60" } };
-          cell.s.font = { color: { rgb: "FFFFFF" }, bold: true };
-        }
-      }
-    }
-    ws['!cols'] = [{ wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 12 }];
-    XLSX.utils.book_append_sheet(wb, ws, "Sipariş");
-    XLSX.writeFile(wb, `Sipariş_${currentOrder.code}.xlsx`);
-  }
-
-  /* YENİ SİPARİŞ */
-  function yeniSiparis() {
-    document.getElementById('customer').value = '';
-    document.querySelectorAll('input[data-g]').forEach(inp => inp.value = '');
-    document.querySelectorAll('.kg').forEach(td => td.textContent = ' ');
-    document.querySelectorAll('[data-total-koli]').forEach(td => td.textContent = ' ');
-    document.querySelectorAll('[data-total-kg]').forEach(td => td.textContent = ' ');
-    updateGramTotals();
-    generateOrderCode();
-  }
-
-  /* SİPARİŞLERİM MODAL */
-  function kayitliSiparisler() {
-    document.getElementById('ordersList').innerHTML = '';
-    if (orders.length === 0) { document.getElementById('ordersList').innerHTML = `<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">${currentLang === 'ar' ? 'لا توجد طلبات مسجلة' : currentLang === 'en' ? 'No saved orders' : 'Kayıtlı sipariş yok'}</div>`; document.getElementById('ordersModal').classList.add('show'); return; }
-    const list = document.getElementById('ordersList');
-    orders.forEach((o, i) => {
-      const item = document.createElement('div');
-      item.className = 'order-item';
-      item.innerHTML = `
-        <div class="info">
-          <div>${o.customer} - ${o.code}</div>
-          <div style="font-size:.75rem;color:var(--gold)">${o.totals.koli} Koli / ${o.totals.kg} KG | ${o.ship}</div>
-        </div>
-        <div class="actions">
-          <button class="edit-btn" onclick="editOrder(${i})" data-tr="Düzenle" data-ar="تعديل" data-en="Edit">Düzenle</button>
-          <button class="del-btn" onclick="deleteOrder(${i})" data-tr="Sil" data-ar="حذف" data-en="Delete">Sil</button>
-        </div>
-      `;
-      list.appendChild(item);
-    });
-    document.getElementById('ordersModal').classList.add('show');
-  }
-  function closeOrdersModal() { document.getElementById('ordersModal').classList.remove('show'); }
-  function editOrder(idx) {
-    closeOrdersModal();
-    loadOrder(orders[idx]);
-  }
-  function deleteOrder(idx) {
-    if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من الحذف؟' : currentLang === 'en' ? 'Are you sure to delete?' : 'Silmek istediğinize emin misiniz?')) return;
-    orders.splice(idx, 1);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    kayitliSiparisler();
-  }
-
-  /* MODAL AÇ/KAPAT */
-  function closeModal() { document.getElementById('summaryModal').classList.remove('show'); }
-
-  /* EXCEL CDN */
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  document.head.appendChild(script);
+  /* ----------  BAŞLAT  ---------- */
+  window.onload=()=>{
+    setLang(localStorage.getItem('lang')||'tr');
+    loadProducts();
+  };
 </script>
 
 </body>
