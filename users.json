@@ -1,4 +1,17 @@
 [
-  { "user": "admin",  "pass": "Adalya", "role": "admin"},
-  { "user": "omer",  "pass": "123",   "role": "user"}
+  {
+    "user": "admin",
+    "pass": "Adalya",
+    "role": "admin"
+  },
+  {
+    "user": "omer",
+    "pass": "123",
+    "role": "user"
+  },
+  {
+    "user": "test",
+    "pass": "Adalya123",
+    "role": "user"
+  }
 ]
