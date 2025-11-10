@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Adalya Company – Anasayfa</title>
 
+  <!-- ===== SheetJS .xlsx indirme – MAD-1 ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
     :root{
       --gold:#d4af37;--bg:#f5f7fa;--surface:#fff;--text:#2c3e50;--error:#e74c3c;--border:#e0e0e0;
@@ -14,7 +17,7 @@
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
     body{background:var(--bg);color:var(--text)}
 
-    /* ÜST BAR – MAD-12 */
+    /* ÜST BAR */
     .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface);box-shadow:var(--shadow);position:sticky;top:0;z-index:990}
     .logo-name{display:flex;align-items:center;gap:12px}
     .logo-name img{height:48px;border-radius:12px}
@@ -35,19 +38,19 @@
     .order-header{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;text-align:center}
     .order-code{font-size:1.5rem;font-weight:700;color:var(--gold);letter-spacing:1px}
 
-    /* GÖNDERİM – MAD-1 */
+    /* GÖNDERİM */
     .gonderim-buttons{display:flex;gap:12px;justify-content:center;margin-bottom:16px}
     .gonderim-btn{flex:1;padding:12px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s ease;background:#eee;color:var(--text)}
     .gonderim-btn.active{background:var(--gold);color:#fff;transform:scale(1.05)}
     .gonderim-btn span{font-size:1.4rem;margin-right:6px}
 
-    /* ARAMA – MAD-2 */
+    /* ARAMA */
     .search-box{position:relative;max-width:600px;margin:0 auto 24px}
     .search-input{width:100%;padding:14px 48px 14px 16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1.1rem;transition:border-color .2s}
     .search-input:focus{border-color:var(--gold);outline:none}
     .clear-search{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.4rem;color:var(--text);cursor:pointer;padding:4px}
 
-    /* ÜRÜN KARTLARI – MAD-5 / MAD-6 */
+    /* ÜRÜN KARTLARI */
     .products-container{display:grid;gap:12px;max-width:1600px;margin:0 auto;grid-template-columns:repeat(5, 1fr);}
     @media (max-width: 1400px){.products-container{grid-template-columns:repeat(4, 1fr);}}
     @media (max-width: 1100px){.products-container{grid-template-columns:repeat(3, 1fr);}}
@@ -74,14 +77,14 @@
     .koli-input input{width:100%;padding:6px 4px;border:1.4px solid var(--border);border-radius:6px;font-family:'Courier New', monospace;font-size:0.85rem;font-weight:600;text-align:center;direction:ltr;transition:border-color .2s}
     .koli-input input:focus{border-color:var(--gold);outline:none}
 
-    /* BUTONLAR – MAD-8 */
+    /* BUTONLAR */
     .action-buttons{display:flex;gap:12px;margin:24px 0;justify-content:center}
     .btn-modern{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s}
     .btn-modern:active{transform:scale(.96)}
     .btn-primary{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(212,175,55,.3)}
     .btn-secondary{background:#eee;color:var(--text)}
 
-    /* ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI – MAD-7 */
+    /* ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI */
     .bottom-total{
       position: fixed;
       bottom: 0;
@@ -103,7 +106,7 @@
     .bottom-total .val{font-family:'Courier New', monospace;}
     .gram-totals{font-size:.8rem;display:flex;gap:12px}
 
-    /* MODAL – SİPARİŞ ÖZETİ – MAD-10 */
+    /* MODAL – SİPARİŞ ÖZETİ */
     .modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px}
     .modal.show{display:flex}
     .modal-content{background:var(--surface);border-radius:var(--radius);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2);display:flex;flex-direction:column}
@@ -116,6 +119,11 @@
     .save-btn{background:var(--gold);color:#fff}
     .btn-secondary{background:#eee;color:var(--text)}
     .excel-btn{background:#217346;color:#fff}
+
+    /* GELEN TOPLAM TABLOSU – MAD-4 */
+    .gelen-total-table{width:100%;border-collapse:collapse;font-size:0.9rem;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-top:12px}
+    .gelen-total-table th,.gelen-total-table td{padding:8px 6px;text-align:center;border:1px solid var(--border)}
+    .gelen-total-table th{background:#fafafa;font-weight:700}
 
     /* TOAST */
     .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:.9rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s ease;z-index:3000}
@@ -169,6 +177,28 @@
     <button class="btn-modern btn-secondary" onclick="openMyOrders()" data-tr="Siparişlerim" data-ar="طلباتي" data-en="My Orders">Siparişlerim</button>
   </div>
 
+  <!-- GELEN TOPLAM TABLOSU – MAD-4 -->
+  <table class="gelen-total-table" id="gelenTotalTable" style="display:none">
+    <thead>
+      <tr>
+        <th>50G (kg)</th>
+        <th>250G (kg)</th>
+        <th>1000G (kg)</th>
+        <th>Toplam Koli</th>
+        <th>Genel Toplam (kg)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="g50t">0</td>
+        <td id="g250t">0</td>
+        <td id="g1000t">0</td>
+        <td id="gkoli">0</td>
+        <td id="gtotal">0</td>
+      </tr>
+    </tbody>
+  </table>
+
 </div>
 
 <!-- ==========  ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI  ========== -->
@@ -203,6 +233,7 @@
 </div>
 
 <script>
+  /* ===== TOKEN ===== */
   const TOKEN = sessionStorage.getItem('ghToken') || (()=>{ const t=prompt('GitHub Personal Access Token (repo scope):'); if(t) sessionStorage.setItem('ghToken',t); return t; })();
   const REPO   = 'XwinSherin/adalyacompany';
   const BRANCH = 'main';
@@ -230,6 +261,21 @@
     } catch (err) {
       console.error(err);
       alert('Yazma hatası: ' + err.message);
+    }
+  }
+
+  async function readGitHubFile(path){
+    if (!TOKEN) return null;
+    try {
+      const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
+        headers: { 'Authorization': `token ${TOKEN}` }
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return JSON.parse(atob(data.content));
+    } catch (e) {
+      console.error(e);
+      return null;
     }
   }
 
@@ -264,13 +310,18 @@
     renderProducts();
   }
 
+  /* ===== ÜRÜN ÇEK – MAD-6 ===== */
   async function loadProducts(){
-    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json');
-    products=await res.json();
-    products=products.filter(p=>p.active!==false);
+    products = await readGitHubFile('products.json') || [];
+    products = products.filter(p => p.active !== false);
     renderProducts();
     generateOrderCode();
     setInterval(updateBottomTotal,300);
+  }
+
+  /* ===== SİPARİŞ ÇEK – MAD-5 ===== */
+  async function loadOrders(){
+    orders = await readGitHubFile('orders.json') || [];
   }
 
   function generateOrderCode(){
@@ -328,6 +379,14 @@
     document.getElementById('tot250').textContent=fmt(t250);
     document.getElementById('tot1000').textContent=fmt(t1000);
     document.getElementById('totKoli').textContent=fmt(tot/KOLI_KG);
+
+    /* GELEN TOPLAM TABLOSU – MAD-4 */
+    document.getElementById('g50t').textContent  =fmt(t50);
+    document.getElementById('g250t').textContent =fmt(t250);
+    document.getElementById('g1000t').textContent=fmt(t1000);
+    document.getElementById('gkoli').textContent =fmt(tot/KOLI_KG);
+    document.getElementById('gtotal').textContent=fmt(tot);
+    document.getElementById('gelenTotalTable').style.display='table';
   }
 
   function clearSearch(){document.getElementById('prodSearch').value='';filterProducts();}
@@ -435,23 +494,23 @@
     newOrder();
   }
 
+  /* ===== EXCEL – MAD-1 ===== */
   function downloadExcel(){
     const code=document.getElementById('orderCode').textContent;
-    let csv='Ürün,Gramaj,Koli,Kg\n';
+    const wb=XLSX.utils.book_new();
+    const wsData=[['Ürün','Gramaj','Koli','Kg']];
     document.querySelectorAll('.product-card').forEach(card=>{
       const k50=parseInt(card.querySelector('.kg-50').textContent.replace(/\s/g,'')||0);
       const k250=parseInt(card.querySelector('.kg-250').textContent.replace(/\s/g,'')||0);
       const k1000=parseInt(card.querySelector('.kg-1000').textContent.replace(/\s/g,'')||0);
       const name=card.querySelector('.product-name').dataset.tr;
-      if(k50>0)  csv+=`${name},50G,${k50/6},${k50}\n`;
-      if(k250>0) csv+=`${name},250G,${k250/6},${k250}\n`;
-      if(k1000>0)csv+=`${name},1000G,${k1000/6},${k1000}\n`;
+      if(k50>0)  wsData.push([name,'50G',k50/6,k50]);
+      if(k250>0) wsData.push([name,'250G',k250/6,k250]);
+      if(k1000>0)wsData.push([name,'1000G',k1000/6,k1000]);
     });
-    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
-    const link=document.createElement('a');
-    link.href=URL.createObjectURL(blob);
-    link.download=`${code}.csv`;
-    link.click();
+    const ws=XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb,ws,'Sipariş');
+    XLSX.writeFile(wb,`${code}.xlsx`);
   }
 
   function shareOrder(){
@@ -463,9 +522,8 @@
   }
 
   async function openMyOrders(){
-    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
-    const all=await res.json();
-    const my=all.filter(o=>o.user===(sessionStorage.getItem('currentUser')||'Bayi'));
+    await loadOrders();
+    const my=orders.filter(o=>o.user===(sessionStorage.getItem('currentUser')||'Bayi'));
     const body=document.getElementById('orderModalBody');
     body.innerHTML='';
     if(my.length===0){body.innerHTML='<p>Henüz siparişiniz yok.</p>';}
@@ -487,9 +545,8 @@
     document.getElementById('orderModal').classList.add('show');
   }
   async function viewOrder(code){
-    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
-    const all=await res.json();
-    const o=all.find(x=>x.code===code);
+    await loadOrders();
+    const o=orders.find(x=>x.code===code);
     if(!o)return;
     const body=document.getElementById('orderModalBody');
     body.innerHTML=`
@@ -504,10 +561,9 @@
   }
   async function deleteOrder(code){
     if(!confirm('Siparişi silmek istediğinize emin misiniz?'))return;
-    const res=await fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json');
-    let all=await res.json();
-    all=all.filter(o=>o.code!==code);
-    await writeGitHubFile('orders.json',JSON.stringify(all,null,2),`Sipariş silindi: ${code}`);
+    await loadOrders();
+    orders=orders.filter(o=>o.code!==code);
+    await writeGitHubFile('orders.json',JSON.stringify(orders,null,2),`Sipariş silindi: ${code}`);
     openMyOrders();
   }
   function shareOrderFrom(code){
@@ -516,8 +572,9 @@
     window.open(url,'_blank');
   }
 
-  window.onload=()=>{
+  window.onload=async()=>{
     setLang(lang);
+    await loadOrders();
     loadProducts();
   };
 </script>
