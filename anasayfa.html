@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Adalya Company – Anasayfa</title>
 
-  <!-- ===== SheetJS .xlsx indirme – MAD-1 ===== -->
+  <!-- SheetJS .xlsx indirme -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
@@ -99,8 +99,8 @@
       align-items: center;
       justify-content: space-between;
       font-size: 1rem;
-      font-weight: 600;
-      box-shadow: 0 -4px 20px rgba(0,0,0,.1);
+      font-weight: 600
+            box-shadow: 0 -4px 20px rgba(0,0,0,.1);
     }
     .bottom-total .label{color:var(--gold);}
     .bottom-total .val{font-family:'Courier New', monospace;}
@@ -119,11 +119,6 @@
     .save-btn{background:var(--gold);color:#fff}
     .btn-secondary{background:#eee;color:var(--text)}
     .excel-btn{background:#217346;color:#fff}
-
-    /* GELEN TOPLAM TABLOSU – MAD-4 */
-    .gelen-total-table{width:100%;border-collapse:collapse;font-size:0.9rem;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-top:12px}
-    .gelen-total-table th,.gelen-total-table td{padding:8px 6px;text-align:center;border:1px solid var(--border)}
-    .gelen-total-table th{background:#fafafa;font-weight:700}
 
     /* TOAST */
     .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:.9rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s ease;z-index:3000}
@@ -145,23 +140,18 @@
   </div>
 </header>
 
-<!-- ==========  ANA İÇERİK  ========== -->
 <div class="content">
-
-  <!-- 1) Sipariş Kodu -->
   <div class="order-header">
     <div class="order-code" id="orderCode">ADL000</div>
     <div data-tr="Sipariş Kodu" data-ar="كود الطلب" data-en="Order Code">Sipariş Kodu</div>
   </div>
 
-  <!-- 2) Gönderim Şekli – 3 İkonlu Buton -->
   <div class="gonderim-buttons">
     <button class="gonderim-btn active" data-value="Karayolu" onclick="setGonderim('Karayolu')" data-tr="Karayolu" data-ar="الطريق البري" data-en="Road"><span>🚛</span><span>Karayolu</span></button>
     <button class="gonderim-btn" data-value="Denizyolu" onclick="setGonderim('Denizyolu')" data-tr="Denizyolu" data-ar="الطريق البحري" data-en="Sea"><span>🚢</span><span>Denizyolu</span></button>
     <button class="gonderim-btn" data-value="Havayolu" onclick="setGonderim('Havayolu')" data-tr="Havayolu" data-ar="الطريق الجوي" data-en="Air"><span>✈️</span><span>Havayolu</span></button>
   </div>
 
-  <!-- 3) ÜRÜN KARTLARI – RESİMLİ -->
   <section id="products" class="section active">
     <div class="search-box">
       <input id="prodSearch" class="search-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
@@ -170,38 +160,13 @@
     <div class="products-container" id="productsList"></div>
   </section>
 
-  <!-- 4) BUTONLAR -->
   <div class="action-buttons">
     <button class="btn-modern btn-secondary" onclick="newOrder()" data-tr="Yeni Sipariş" data-ar="طلب جديد" data-en="New Order">Yeni Sipariş</button>
     <button class="btn-modern btn-primary" onclick="openOrderModal()" data-tr="Sipariş Özeti & Kaydet" data-ar="ملخص الطلب & حفظ" data-en="Order Summary & Save">Sipariş Özeti & Kaydet</button>
     <button class="btn-modern btn-secondary" onclick="openMyOrders()" data-tr="Siparişlerim" data-ar="طلباتي" data-en="My Orders">Siparişlerim</button>
   </div>
-
-  <!-- GELEN TOPLAM TABLOSU – MAD-4 -->
-  <table class="gelen-total-table" id="gelenTotalTable" style="display:none">
-    <thead>
-      <tr>
-        <th>50G (kg)</th>
-        <th>250G (kg)</th>
-        <th>1000G (kg)</th>
-        <th>Toplam Koli</th>
-        <th>Genel Toplam (kg)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="g50t">0</td>
-        <td id="g250t">0</td>
-        <td id="g1000t">0</td>
-        <td id="gkoli">0</td>
-        <td id="gtotal">0</td>
-      </tr>
-    </tbody>
-  </table>
-
 </div>
 
-<!-- ==========  ALT MODAL – GENEL TOPLAM + GRAMAJ TOPLAMLARI  ========== -->
 <div class="bottom-total" id="bottomTotal">
   <div>
     <span class="label" data-tr="Genel Toplam" data-ar="المجموع العام" data-en="Grand Total">Genel Toplam</span>
@@ -215,7 +180,6 @@
   </div>
 </div>
 
-<!-- ==========  MODAL – SİPARİŞ ÖZETİ  ========== -->
 <div class="modal" id="orderModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -233,7 +197,6 @@
 </div>
 
 <script>
-  /* ===== TOKEN ===== */
   const TOKEN = sessionStorage.getItem('ghToken') || (()=>{ const t=prompt('GitHub Personal Access Token (repo scope):'); if(t) sessionStorage.setItem('ghToken',t); return t; })();
   const REPO   = 'XwinSherin/adalyacompany';
   const BRANCH = 'main';
@@ -293,24 +256,29 @@
 
   function cikis(){ sessionStorage.clear(); location.href='index.html'; }
 
+  /* ===== NULL-SAFE DİL – CONSOLE HATASIZ ===== */
   function setLang(l){
     lang=l; localStorage.setItem('lang',lang);
     document.documentElement.lang=lang;
     document.documentElement.dir=(lang==='ar'?'rtl':'ltr');
-    document.querySelectorAll('[data-tr]').forEach(el=>el.textContent=el.dataset[lang]||el.dataset.tr);
+    document.querySelectorAll('[data-tr]').forEach(el=>{
+      if(!el) return;
+      el.textContent = el.dataset[lang] || el.dataset.tr;
+    });
     document.querySelectorAll('.gonderim-btn').forEach(btn=>{
       const val = btn.dataset.value;
       const trMap={Karayolu:'Karayolu',Denizyolu:'Denizyolu',Havayolu:'Havayolu'};
       const arMap={Karayolu:'الطريق البري',Denizyolu:'الطريق البحري',Havayolu:'الطريق الجوي'};
       const enMap={Karayolu:'Road',Denizyolu:'Sea',Havayolu:'Air'};
       const map=lang==='ar'?arMap:lang==='en'?enMap:trMap;
-      btn.querySelector('span:last-child').textContent=map[val];
+      const span = btn.querySelector('span:last-child');
+      if(span) span.textContent = map[val];
     });
-    document.querySelectorAll('.lang-group button').forEach(b=>b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية':lang==='en'?'English':'Türkçe')));
-    renderProducts();
+    document.querySelectorAll('.lang-group button').forEach(b=>
+      b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية':lang==='en'?'English':'Türkçe'))
+    );
   }
 
-  /* ===== ÜRÜN ÇEK – MAD-6 ===== */
   async function loadProducts(){
     products = await readGitHubFile('products.json') || [];
     products = products.filter(p => p.active !== false);
@@ -319,7 +287,6 @@
     setInterval(updateBottomTotal,300);
   }
 
-  /* ===== SİPARİŞ ÇEK – MAD-5 ===== */
   async function loadOrders(){
     orders = await readGitHubFile('orders.json') || [];
   }
@@ -379,14 +346,6 @@
     document.getElementById('tot250').textContent=fmt(t250);
     document.getElementById('tot1000').textContent=fmt(t1000);
     document.getElementById('totKoli').textContent=fmt(tot/KOLI_KG);
-
-    /* GELEN TOPLAM TABLOSU – MAD-4 */
-    document.getElementById('g50t').textContent  =fmt(t50);
-    document.getElementById('g250t').textContent =fmt(t250);
-    document.getElementById('g1000t').textContent=fmt(t1000);
-    document.getElementById('gkoli').textContent =fmt(tot/KOLI_KG);
-    document.getElementById('gtotal').textContent=fmt(tot);
-    document.getElementById('gelenTotalTable').style.display='table';
   }
 
   function clearSearch(){document.getElementById('prodSearch').value='';filterProducts();}
@@ -494,7 +453,6 @@
     newOrder();
   }
 
-  /* ===== EXCEL – MAD-1 ===== */
   function downloadExcel(){
     const code=document.getElementById('orderCode').textContent;
     const wb=XLSX.utils.book_new();
