@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "tr": "Angel Lips",
+    "en": "Angel Lips",
+    "ar": "آنجل ليبس",
+    "img": "img/1.png"
+  },
+  {
+    "id": 2,
+    "tr": "Bagdadi",
+    "ar": "بغدادي",
+    "en": "Bagdadi",
+    "img": "img/2.png"
+  },
+  {
+    "id": 3,
+    "tr": "Izmir Romantic",
+    "en": "Izmir Romantic",
+    "ar": "إزمير رومانتيك",
+    "img": "img/3.png"
+  },
+  {
+    "id": 4,
+    "tr": "JK777",
+    "en": "JK777",
+    "ar": "جوكر ٧٧٧",
+    "img": "img/4.png"
+  },
+  {
+    "id": 5,
+    "tr": "Lady Killer",
+    "en": "Lady Killer",
+    "ar": "ليدي  كلير",
+    "img": "img/5.png"
+  },
+  {
+    "id": 6,
+    "tr": "Love 66",
+    "en": "Love 66",
+    "ar": "لوف ٦٦",
+    "img": "img/6.png"
+  }
+
+
+  
+]
