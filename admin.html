@@ -102,7 +102,7 @@
 
 <!-- İÇERİK – MODERN -->
 <div class="content">
-  <!-- SİPARİŞLER – ÇİZGİLİ TABLO + FİLTRE + SÜTUN TOPLAMLARI -->
+  <!-- SİPARİŞLER -->
   <section id="orders" class="section active">
     <h3>Siparişler</h3>
     <div class="table-container">
@@ -126,15 +126,20 @@
     </div>
   </section>
 
-  <!-- ÜRÜNLER – SIRALAMALI LİSTE -->
+  <!-- ÜRÜNLER – ARAMA + AKTİF/PASİF + SIRALAMA + EKLE + SİL -->
   <section id="products" class="section">
     <h3>Ürünler</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input id="prodSearch" class="filter-input" placeholder="Ürün ara (TR/AR/EN)" oninput="filterProducts()">
+      <button class="btn-modern btn-primary" onclick="addProduct()">+ Yeni Ürün</button>
+    </div>
     <div class="list" id="productsList"></div>
   </section>
 
-  <!-- KULLANICILAR – GITHUB’DAN OKU -->
+  <!-- KULLANICILAR – ŞİFRE AÇIK + YENİ EKLE -->
   <section id="users" class="section">
     <h3>Kullanıcılar</h3>
+    <button class="btn-modern btn-primary" onclick="addUser()">+ Yeni Kullanıcı</button>
     <div class="list" id="usersList"></div>
   </section>
 </div>
@@ -158,11 +163,10 @@
   const PRODUCTS_URL= 'https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json';
 
   /* ---------- GLOBAL DEĞİŞKENLER ---------- */
-  let users   = [];
-  let orders  = [];
-  let products= [];
-
-  const KOLI_KG = 6;
+  let users       = [];
+  let orders      = [];
+  let products    = [];
+  const KOLI_KG   = 6;
 
   /* ---------- GİRİŞ KONTROLÜ ---------- */
   (()=>{
@@ -172,7 +176,7 @@
     }
   })();
 
-  /* ---------- GITHUB’DAN TÜM VERİLERİ ÇEK ---------- */
+  /* ---------- TÜM VERİLERİ ÇEK ---------- */
   async function loadAll(){
     try{
       const [u,o,p] = await Promise.all([
@@ -182,7 +186,7 @@
       ]);
       users   = u;
       orders  = o;
- products= p;
+      products= p.map(x=>({...x, active: x.active!==false})); // varsayılan true
       renderOrders();
       renderProducts();
       renderUsers();
@@ -249,7 +253,6 @@
   }
   function filterOrders(){ renderOrders(); }
 
-  /* ---------- SİPARİŞ GÖR / DÜZENLE ---------- */
   function viewOrder(idx){
     const o=orders[idx];
     openModal(`
@@ -315,29 +318,87 @@
     renderOrders();
   }
 
-  /* ---------- ÜRÜNLER ---------- */
+  /* ---------- ÜRÜNLER – ARAMA + AKTİF/PASİF + SIRALAMA + EKLE + SİL ---------- */
   function renderProducts(){
     const list=document.getElementById('productsList');
     list.innerHTML='';
-    if(products.length===0){
-      list.innerHTML=`<div style="text-align:center;padding:20px;font-size:.9rem;color:var(--text)">Ürün yükleniyor...</div>`;
-      return;
-    }
-    products.forEach((p,i)=>{
+    const search=document.getElementById('prodSearch').value.toLowerCase();
+    const filtered=products.filter(p=>
+      p.tr.toLowerCase().includes(search)||
+      p.ar.toLowerCase().includes(search)||
+      p.en.toLowerCase().includes(search)
+    );
+    filtered.forEach((p,i)=>{
       const item=document.createElement('div');
       item.className='item';
+      item.draggable=true;
+      item.dataset.id=p.id;
       item.innerHTML=`
+        <span class="drag-handle" title="Sürükle" style="cursor:grab;padding:0 8px;font-size:1.2rem">⋮⋮</span>
         <img src="https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/${p.img}" alt="${p.tr}" onerror="this.src='https://via.placeholder.com/60x60?text=PNG'">
         <div class="info">
-          <div class="name">${p.tr}</div>
+          <div class="name">${p.tr} <span style="font-size:.75rem;color:var(--error)">${!p.active?' (Pasif)':''}</span></div>
           <div class="sub">${p.ar} | ${p.en}</div>
         </div>
         <div class="actions">
+          <button class="edit-btn" onclick="toggleActive(${p.id})">${p.active?'Pasif Yap':'Aktif Yap'}</button>
           <button class="edit-btn" onclick="viewProduct(${i})">Gör</button>
+          <button class="del-btn" onclick="deleteProduct(${p.id})">Sil</button>
         </div>
       `;
+      item.ondragstart=e=>{ draggedEl=item; item.style.opacity='.5'; };
+      item.ondragend  =e=>{ item.style.opacity=''; };
+      item.ondragover =e=>e.preventDefault();
+      item.ondrop     =e=>{ e.preventDefault(); reorderProducts(item); };
       list.appendChild(item);
     });
+  }
+  let draggedEl=null;
+  function reorderProducts(dropTarget){
+    const draggedId=parseInt(draggedEl.dataset.id);
+    const targetId=parseInt(dropTarget.dataset.id);
+    if(draggedId===targetId)return;
+    const draggedIndex=products.findIndex(p=>p.id===draggedId);
+    const targetIndex =products.findIndex(p=>p.id===targetId);
+    const [removed]=products.splice(draggedIndex,1);
+    products.splice(targetIndex,0,removed);
+    renderProducts();
+  }
+  function toggleActive(id){
+    const p=products.find(x=>x.id===id);
+    p.active=!p.active;
+    renderProducts();
+  }
+  function deleteProduct(id){
+    if(!confirm('Ürünü silmek istediğinize emin misiniz?'))return;
+    products=products.filter(p=>p.id!==id);
+    renderProducts();
+  }
+  function addProduct(){
+    openModal(`
+      <h3>Yeni Ürün Ekle</h3>
+      <label>Türkçe İsim</label><input id="newTr" type="text">
+      <label>Arapça İsim</label><input id="newAr" type="text">
+      <label>İngilizce İsim</label><input id="newEn" type="text">
+      <label>Resim Yolu (örn: img/99.png)</label><input id="newImg" type="text">
+    `,`
+      <button class="save-btn" onclick="saveNewProduct()">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
+    `);
+  }
+  function saveNewProduct(){
+    const p={
+      id: Math.max(...products.map(x=>x.id),0)+1,
+      tr: document.getElementById('newTr').value.trim(),
+      ar: document.getElementById('newAr').value.trim(),
+      en: document.getElementById('newEn').value.trim(),
+      img: document.getElementById('newImg').value.trim(),
+      active: true
+    };
+    if(!p.tr||!p.ar||!p.en){ alert('İsimler zorunlu'); return; }
+    products.push(p);
+    closeModal();
+    renderProducts();
   }
   function viewProduct(i){
     const p=products[i];
@@ -348,8 +409,9 @@
       <p><strong>Arapça:</strong> ${p.ar}</p>
     `);
   }
+  function filterProducts(){ renderProducts(); }
 
-  /* ---------- KULLANICILAR ---------- */
+  /* ---------- KULLANICILAR – ŞİFRE AÇIK + YENİ EKLE ---------- */
   function renderUsers(){
     const list=document.getElementById('usersList');
     list.innerHTML='';
@@ -363,11 +425,48 @@
       item.innerHTML=`
         <div class="info">
           <div class="name">${u.user}</div>
-          <div class="sub">${u.role==='admin'?'Yönetici':'Kullanıcı'}</div>
+          <div class="sub">Şifre: <b>${u.pass}</b> – Rol: ${u.role==='admin'?'Yönetici':'Bayi'}</div>
+        </div>
+        <div class="actions">
+          <button class="edit-btn" onclick="resetUserPass(${i})">Şifre Sıfırla</button>
+          ${u.user!=='admin'?'<button class="del-btn" onclick="deleteUser('+i+')">Sil</button>':''}
         </div>
       `;
       list.appendChild(item);
     });
+  }
+  function addUser(){
+    openModal(`
+      <h3>Yeni Kullanıcı Ekle</h3>
+      <label>Kullanıcı Adı</label><input id="addUserName" type="text">
+      <label>Şifre</label><input id="addPass" type="text" placeholder="Boş bırakırsan Adalya123 olur">
+      <label>Rol</label>
+      <select id="addRole"><option value="user">Bayi</option><option value="admin">Yönetici</option></select>
+    `,`
+      <button class="save-btn" onclick="saveNewUser()">Kaydet</button>
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
+    `);
+  }
+  function saveNewUser(){
+    const name=document.getElementById('addUserName').value.trim();
+    const pass=document.getElementById('addPass').value.trim()||'Adalya123';
+    const role=document.getElementById('addRole').value;
+    if(!name){ alert('Kullanıcı adı gerekli'); return; }
+    if(users.find(x=>x.user===name)){ alert('Bu kullanıcı zaten var'); return; }
+    users.push({user:name, pass:pass, role:role});
+    closeModal();
+    renderUsers();
+  }
+  function resetUserPass(i){
+    const np=prompt('Yeni şifre:','Adalya123');
+    if(np===null)return;
+    users[i].pass=np.trim();
+    renderUsers();
+  }
+  function deleteUser(i){
+    if(!confirm('Kullanıcıyı silmek istediğinize emin misiniz?'))return;
+    users.splice(i,1);
+    renderUsers();
   }
 
   /* ---------- MODAL ---------- */
