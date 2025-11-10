@@ -35,7 +35,6 @@
     .actions{display:flex;gap:6px;justify-content:center}
     .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:.75rem;cursor:pointer}
     .edit-btn{background:var(--gold);color:#fff}
-    .list{display:flex;flex-direction:column;gap:12px}
     .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
     .card img{width:120px;height:120px;object-fit:cover;border-radius:12px;border:2px solid var(--gold)}
     .card .name{font-size:1rem;font-weight:700}
@@ -66,7 +65,6 @@
 </div>
 
 <div class="content">
-  <!-- 1) SİPARİŞLER -->
   <section id="orders" class="section active">
     <h3>Siparişler</h3>
     <div class="table-container">
@@ -79,7 +77,6 @@
     </div>
   </section>
 
-  <!-- 2) ÜRÜNLER – KART + ARAMA + EKLE -->
   <section id="products" class="section">
     <h3>Ürünler</h3>
     <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -89,7 +86,6 @@
     <div class="list" id="productsList"></div>
   </section>
 
-  <!-- 3) KULLANICILAR – KART + EKLE -->
   <section id="users" class="section">
     <h3>Kullanıcılar</h3>
     <button class="btn-modern btn-primary" onclick="addUser()">+ Yeni Kullanıcı Ekle</button>
@@ -97,7 +93,6 @@
   </section>
 </div>
 
-<!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <div class="modal-header"><h2 id="modalTitle">Modal</h2><button class="close-modal" onclick="closeModal()">&times;</button></div>
@@ -107,31 +102,47 @@
 </div>
 
 <script>
-  /* ----------  GİTHUB TOKEN (Yöntem A)  ---------- */
+  /* ----------  TOKEN (Yöntem A)  ---------- */
   let TOKEN = sessionStorage.getItem('ghToken');
   if (!TOKEN) {
-    TOKEN = prompt('GitHub Personal Access Token girin (sadece bu oturumda tutulur):');
+    TOKEN = prompt('GitHub Personal Access Token (repo scope):');
     if (TOKEN) sessionStorage.setItem('ghToken', TOKEN);
   }
-  const REPO    = 'XwinSherin/adalyacompany';
-  const BRANCH  = 'main';
+  const REPO   = 'XwinSherin/adalyacompany';
+  const BRANCH = 'main';
 
-  /* ----------  GİTHUB'A YAZMA FONKSİYONU  ---------- */
+  /* ----------  GİTHUB'A YAZ – 409 ÇÖZÜMÜ  ---------- */
   async function writeGitHubFile(path, content, message){
-    if (!TOKEN) { alert('Token girilmedi, işlem iptal edildi.'); return; }
+    if (!TOKEN) { alert('Token yok'); return; }
     try {
-      const refRes = await fetch(`https://api.github.com/repos/${REPO}/git/ref/heads/${BRANCH}`);
-      const refData= await refRes.json();
-      const sha    = refData.object.sha;
-      const encoded= btoa(unescape(encodeURIComponent(content)));
-      const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`,{
+      const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`, {
+        headers: { 'Authorization': `token ${TOKEN}` }
+      });
+      let sha = '';
+      if (getRes.status === 200) {
+        const fileInfo = await getRes.json();
+        sha = fileInfo.sha;
+      } else if (getRes.status === 404) {
+        // dosya yok → oluştur
+      } else {
+        throw new Error('SHA alınamadı: ' + getRes.statusText);
+      }
+      const encoded = btoa(unescape(encodeURIComponent(content)));
+      const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
         method : 'PUT',
-        headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type':'application/json' },
+        headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type': 'application/json' },
         body   : JSON.stringify({ message, content: encoded, sha })
       });
-      if (!putRes.ok) throw new Error(putRes.statusText);
-      alert(`${path} güncellendi! 5-10 sn içinde yayınlanır.`);
-    } catch (err) { alert('Yazma hatası: ' + err); }
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || putRes.statusText);
+      }
+      console.log(`${path} güncellendi`);
+      alert(`${path} başarıyla GitHub’a yazıldı!`);
+    } catch (err) {
+      console.error(err);
+      alert('Yazma hatası: ' + err.message);
+    }
   }
 
   /* ----------  DEĞİŞKENLER  ---------- */
@@ -149,6 +160,23 @@
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active');
     document.getElementById(tab).classList.add('active');
+  }
+
+  /* ----------  TÜM VERİLERİ ÇEK  ---------- */
+  async function loadAll(){
+    try {
+      const [u, o, p] = await Promise.all([
+        fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/users.json').then(r=>r.json()),
+        fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/orders.json').then(r=>r.json()),
+        fetch('https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/products.json').then(r=>r.json())
+      ]);
+      users   = u;
+      orders  = o;
+      products= p.map(x=>({...x, active: x.active!==false}));
+      renderOrders();
+      renderProducts();
+      renderUsers();
+    } catch (err) { console.error('Veri çekilemedi:', err); }
   }
 
   /* ----------  SİPARİŞLER  ---------- */
