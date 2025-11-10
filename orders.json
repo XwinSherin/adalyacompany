@@ -126,5 +126,56 @@
         "kg": 138
       }
     ]
+  },
+  {
+    "user": "omer",
+    "code": "omer101125003",
+    "gonderim": "Havayolu",
+    "date": "2025-11-10T12:57:29.235Z",
+    "items": [
+      {
+        "50": 1,
+        "250": 0,
+        "1000": 0,
+        "product": "Izmir Romantic",
+        "koli": 1,
+        "kg": 6
+      },
+      {
+        "50": 0,
+        "250": 0,
+        "1000": 1,
+        "product": "JK777",
+        "koli": 1,
+        "kg": 6
+      },
+      {
+        "50": 1,
+        "250": 0,
+        "1000": 0,
+        "product": "Lady Killer",
+        "koli": 1,
+        "kg": 6
+      },
+      {
+        "50": 0,
+        "250": 123,
+        "1000": 0,
+        "product": "Love 66",
+        "koli": 123,
+        "kg": 738
+      },
+      {
+        "50": 12,
+        "250": 0,
+        "1000": 3,
+        "product": "test",
+        "koli": 15,
+        "kg": 90
+      }
+    ],
+    "totalKg": 846,
+    "totalKoli": 141,
+    "status": "pending"
   }
 ]
