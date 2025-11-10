@@ -25,7 +25,6 @@
       border-radius:20px;padding:40px 24px;
       box-shadow:0 8px 30px rgba(0,0,0,.08);text-align:center
     }
-    /* LOGO : beyaz arkaplanlı kare → daire içine orantılı */
     .logo-box{
       width:120px;height:120px;margin:0 auto 12px;border-radius:50%;
       background:#fff;border:4px solid var(--gold);
@@ -52,7 +51,6 @@
     button:hover{background:var(--gold-dark);transform:translateY(-2px)}
     .error{display:none;color:var(--error);font-size:.85rem;margin-top:-10px;margin-bottom:10px}
 
-    /* Sabit alt dil butonları */
     .lang-float{
       position:fixed;bottom:16px;right:16px;z-index:999;
       display:flex;gap:6px;background:rgba(255,255,255,.85);
@@ -67,9 +65,13 @@
     .lang-float button:active{transform:scale(.92)}
     .lang-float button.active{background:var(--gold);color:#fff}
   </style>
-</head>
-<body>
 
+  <script>
+    const USERS_URL = 'https://raw.githubusercontent.com/XwinSherin/adalyacompany/main/users.json';
+  </script>
+</head>
+
+<body>
 <div class="login-box">
   <div class="logo-box">
     <img src="img/adalyalogo.jpg" alt="Logo">
@@ -88,7 +90,6 @@
   <button onclick="giris()" data-tr="Giriş" data-ar="دخول" data-en="Login">Giriş</button>
 </div>
 
-<!-- Dil seçici -->
 <div class="lang-float">
   <button class="active" onclick="setLang('tr')" title="Türkçe">Türkçe</button>
   <button onclick="setLang('ar')" title="العربية">العربية</button>
@@ -104,14 +105,27 @@
     document.querySelectorAll('[data-tr-placeholder]').forEach(el=>el.placeholder=el.dataset[lang+'Placeholder']||el.dataset.trPlaceholder);
     document.querySelectorAll('.lang-float button').forEach(b=>b.classList.toggle('active',b.title.includes(lang==='ar'?'العربية':lang==='en'?'English':'Türkçe')));
   }
-  function giris(){
+
+  async function giris(){
     const u=document.getElementById('user').value.trim();
     const p=document.getElementById('pass').value.trim();
-    if(!localStorage.getItem('users'))localStorage.setItem('users',JSON.stringify([{user:'admin',pass:'Adalya123'}]));
-    const users=JSON.parse(localStorage.getItem('users'));
-    if(users.find(x=>x.user===u&&x.pass===p)){localStorage.setItem('giris','1');localStorage.setItem('currentUser',u);window.location.href='anasayfa.html';}
-    else document.getElementById('msg').style.display='block';
+    const msg=document.getElementById('msg');
+    try{
+      const res=await fetch(USERS_URL);
+      const users=await res.json();
+      const found=users.find(x=>x.user===u && x.pass===p);
+      if(found){
+        sessionStorage.setItem('role',found.role);
+        sessionStorage.setItem('currentUser',u);
+        location.href= found.role==='admin' ? 'admin.html' : 'dealer.html';
+      }else{
+        msg.style.display='block';
+      }
+    }catch(err){
+      msg.textContent='Bağlantı hatası!'; msg.style.display='block';
+    }
   }
+
   (()=>{setLang(localStorage.getItem('lang')||'tr')})();
 </script>
 
