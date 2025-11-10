@@ -40,8 +40,14 @@
     "en": "Love 66",
     "ar": "لوف ٦٦",
     "img": "img/6.png"
+  },
+{
+    "id": 7,
+    "tr": "test",
+    "en": "test",
+    "ar": "جوكر",
+    "img": "img/4.png"
   }
-
 
   
 ]
